@@ -13,7 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package parkingplacescanning;
+package cz.cuni.d3s.parkingplacescanning;
 
 import org.car2x.veins.nodes.RSU;
 import org.car2x.veins.nodes.Scenario;
