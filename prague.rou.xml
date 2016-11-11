@@ -1,7 +1,22 @@
 <?xml version="1.0"?>
 <routes>
-	<vType id="SkodaCitigo" accel="2.14" decel="4.23" sigma="0.5" length="3.56" minGap="2.5" maxSpeed="13.88" color="0.5,0,0.5"/>
+	<vType id="SkodaCitigo" accel="2.14" decel="4.23" sigma="0.5" length="3.56" minGap="2.5" maxSpeed="13.88" color="0,0,1"/>
 	
-	<!-- 100x Malostranske namesti -> Pod Bruskou -->
-	<flow id="flow0" type="SkodaCitigo" from="4086148#0" to="28158988" begin="0" period="5" number="100"/>
+	<!-- id to destination map 
+		4086148#0	Malostranske namesti
+		8111357#1	Chotkova
+		40316234	Vítězná
+		433977998	Nábřeží Edvarda Beneše
+		-130525178	Úvoz
+		27302722#0	Vlasska
+	-->
+	
+	<flow id="chotkova_vitezna" type="SkodaCitigo" from="8111357#1" to="40316234" probability="0.2" />	
+	<flow id="vitezna_chotkova" type="SkodaCitigo" to="8111357#1" from="40316234" probability="0.2" />
+	
+	<flow id="vlasska_vitezna" type="SkodaCitigo" from="27302722#0" to="40316234" probability="0.1" />
+	<flow id="vitezna_uvoz" type="SkodaCitigo" to="-130525178" from="40316234" probability="0.1" />
+	
+	<flow id="vlasska_chotkova" type="SkodaCitigo" from="27302722#0" to="8111357#1" probability="0.2" />
+	<flow id="chotkova_uvoz" type="SkodaCitigo" to="-130525178" from="8111357#1" probability="0.2" />
 </routes>
