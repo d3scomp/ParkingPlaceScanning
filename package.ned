@@ -1,0 +1,3 @@
+package parkingplacescanning;
+
+@license(LGPL);

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- debug config -->
+<launch>
+	<copy file="prague.net.xml" />
+	<copy file="prague.rou.xml" />
+	<copy file="prague.poly.xml" />
+	<copy file="prague.sumo.cfg" type="config" />
+</launch>
+

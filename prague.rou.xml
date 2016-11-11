@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<routes>
+	<vType id="SkodaCitigo" accel="2.14" decel="4.23" sigma="0.5" length="3.56" minGap="2.5" maxSpeed="13.88" color="0.5,0,0.5"/>
+	
+	<!-- 100x Malostranske namesti -> Pod Bruskou -->
+	<flow id="flow0" type="SkodaCitigo" from="4086148#0" to="28158988" begin="0" period="5" number="100"/>
+</routes>
