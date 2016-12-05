@@ -15,9 +15,74 @@
 
 package cz.cuni.d3s.parkingplacescanning;
 
-import org.car2x.veins.nodes.RSU;
-import org.car2x.veins.nodes.Scenario;
+import org.car2x.veins.base.connectionManager.ConnectionManager;
+import org.car2x.veins.base.modules.BaseWorldUtility;
+import org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerForker;
+import org.car2x.veins.modules.obstacle.ObstacleControl;
+import org.car2x.veins.modules.world.annotations.AnnotationManager;
 
-network ParkingPlaceScanningScenario extends Scenario {
+import inet.networklayer.autorouting.ipv4.IPv4NetworkConfigurator;
+import inet.nodes.inet.AdhocHost;
+import inet.world.radio.ChannelControl;
+import inet.nodes.inet.Router;
+import inet.nodes.inet.StandardHost;
+import inet.nodes.ethernet.Eth10G;
+import inet.networklayer.ipv4.RoutingTableRecorder;
 
+import lte.corenetwork.binder.*;
+import lte.corenetwork.nodes.*;
+
+network ParkingPlaceScanningScenario {
+  parameters:
+        double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
+        double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
+        double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
+        @display("bgb=732,483");
+        int numUe = default(100);
+
+    submodules:
+        obstacles: ObstacleControl {
+            @display("p=261,35");
+        }
+        annotations: AnnotationManager {
+            @display("p=485,35");
+        }
+        connectionManager: ConnectionManager {
+            parameters:
+                @display("p=146,31;i=abstract/multicast");
+        }
+        world: BaseWorldUtility {
+            parameters:
+                playgroundSizeX = playgroundSizeX;
+                playgroundSizeY = playgroundSizeY;
+                playgroundSizeZ = playgroundSizeZ;
+                @display("p=34,31;i=misc/globe");
+        }
+        manager: TraCIScenarioManagerForker {
+            parameters:
+                @display("p=34,206");
+        }
+
+        // needed for INET
+        channelControl: ChannelControl {
+            @display("p=361,34");
+        }
+        configurator: IPv4NetworkConfigurator {
+            @display("p=34,97");
+        }
+        // LTE stuff
+        binder: LteBinder {
+            @display("p=34,152;is=s");
+        }
+        eNodeB1: eNodeB {
+            @display("p=200,200;is=vl");
+        }
+        server: StandardHost {
+            @display("p=146,152;is=n;i=device/server");
+        }
+        routingRecorder: RoutingTableRecorder {
+            @display("p=34,274;is=s");
+        }
+    connections allowunconnected:
+        server.pppg++ <--> Eth10G <--> eNodeB1.ppp;
 }
