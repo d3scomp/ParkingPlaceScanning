@@ -1,0 +1,15 @@
+diff -Naur veins-lte.vanilla/veins/src/veins/modules/lte/HeterogeneousToLTE.cc veins-lte.modified/veins/src/veins/modules/lte/HeterogeneousToLTE.cc
+--- veins-lte.vanilla/veins/src/veins/modules/lte/HeterogeneousToLTE.cc	2016-10-17 10:05:00.000000000 +0200
++++ veins-lte.modified/veins/src/veins/modules/lte/HeterogeneousToLTE.cc	2016-12-09 13:02:17.081333525 +0100
+@@ -48,6 +48,11 @@
+ 	if (gateId == fromApplication) {
+ 		HeterogeneousMessage *heterogeneousMessage = dynamic_cast<HeterogeneousMessage *>(msg);
+ 		std::string destinationAddress = heterogeneousMessage->getDestinationAddress();
++		
++		//##################################################################################################################################################################################################################
++		std::replace(destinationAddress.begin(), destinationAddress.end(), '.', '?');  // DIRTY FIX FOR DOTS IN MODULE NAMES
++		//##################################################################################################################################################################################################################
++		
+ 		if (destinationAddress == id) {
+ 			INFO_ID("Sender and receiver are the same, message not sent!");
+ 			delete msg;
