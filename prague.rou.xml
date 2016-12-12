@@ -11,6 +11,7 @@
 		27302722#0	Vlasska
 	-->
 	
+<!--
 	<flow id="chotkova_vitezna" type="SkodaCitigo" from="8111357#1" to="40316234" probability="0.2" />
 	<flow id="vitezna_chotkova" type="SkodaCitigo" to="8111357#1" from="40316234" probability="0.2" />
 	
@@ -19,5 +20,8 @@
 	
 	<flow id="vlasska_chotkova" type="SkodaCitigo" from="27302722#0" to="8111357#1" probability="0.2" />
 	<flow id="chotkova_uvoz" type="SkodaCitigo" to="-130525178" from="8111357#1" probability="0.2" /> 
+	-->
+	
+	<flow id="vlasska_uvoz" type="SkodaCitigo" from="27302722#0" to="-130525178" probability="0.2" />
 	
 </routes>
