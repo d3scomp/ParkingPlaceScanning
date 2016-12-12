@@ -75,10 +75,10 @@ network ParkingPlaceScanningScenario {
             @display("p=34,152;is=s");
         }
         eNodeB1: eNodeB {
-            @display("p=200,200;is=vl");
+            @display("p=1490,950;is=vl");
         }
         server: StandardHost {
-            @display("p=146,152;is=n;i=device/server");
+            @display("p=1460,940;is=n;i=device/server");
         }
         routingRecorder: RoutingTableRecorder {
             @display("p=34,274;is=s");
