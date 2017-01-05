@@ -25,4 +25,8 @@ simple CarApp extends BaseWaveApplLayer
 {
     @class(CarApp);
     @display("i=block/app2");
+	
+    gates:
+        output toDecisionMaker;
+        input  fromDecisionMaker;
 }

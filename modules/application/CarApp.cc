@@ -19,22 +19,39 @@ void CarApp::initialize(int stage) {
 		
 		// Schedule parking assistance request
 		scheduleAt(simTime() + uniform(0, 1), new cMessage("CallForAssistance"));
+		
+		std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX INITIALIZED XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
 	}
 }
 
 void CarApp::handleMessage(cMessage *msg) {
-if (msg->isSelfMessage()) {
-		/*
-		 * Send a message to a random node in the network. Note that only the most necessary values
-		 * are set. Size of the message have to be set according to the real message (aka your used
-		 * .msg file). The values here are just a temporary placeholder.
-		 */
+	if (msg->isSelfMessage()) {
+		// Call for parking assistance
+		HeterogeneousMessage *callMessage = new HeterogeneousMessage();
+		callMessage->setNetworkType(DONTCARE);
+		callMessage->setName("Heterogeneous call for assistance message");
+		callMessage->setByteLength(10);
+		
+		callMessage->setDestinationAddress("0"); // BROADCAST?
+		
+	} else {
+		HeterogeneousMessage *testMessage = dynamic_cast<HeterogeneousMessage *>(msg);
+		std::cout << "Received message " << msg->getFullName() << " from " << testMessage->getSourceAddress() << std::endl;
+	}
+}
+	
+	
+	/*
+	if (msg->isSelfMessage()) {
+		// Send a message to a random node in the network. Note that only the most necessary values
+		// are set. Size of the message have to be set according to the real message (aka your used
+		// .msg file). The values here are just a temporary placeholder.
 		HeterogeneousMessage *testMessage = new HeterogeneousMessage();
 		testMessage->setNetworkType(DONTCARE);
 		testMessage->setName("Heterogeneous Test Message");
 		testMessage->setByteLength(10);
 
-		/* choose a random other car to send the message to */
+		// choose a random other car to send the message to 
 		Veins::TraCIScenarioManager* manager = Veins::TraCIScenarioManagerAccess().get();
 		std::map<std::string, cModule*> hosts = manager->getManagedHosts();
 		std::map<std::string, cModule*>::iterator it = hosts.begin();
@@ -43,14 +60,12 @@ if (msg->isSelfMessage()) {
 		std::cout << "Sending message to " << destination << std::endl;
 		testMessage->setDestinationAddress(destination.c_str());
 
-		/* Finish the message and send it */
+		// Finish the message and send it
 		testMessage->setSourceAddress(mobility->getExternalId().c_str());
 		send(testMessage, toDecisionMaker);
 
-		/*
-		 * At 25% of the time send also a message to the main server. This message is sent via LTE
-		 * and is then simply handed to the decision maker.
-		 */
+		// At 25% of the time send also a message to the main server. This message is sent via LTE
+		// and is then simply handed to the decision maker.
 		if(dblrand() < 0.25){
 			std::cout << "Sending message also to server" << std::endl;
 			HeterogeneousMessage* serverMessage = new HeterogeneousMessage();
@@ -67,4 +82,4 @@ if (msg->isSelfMessage()) {
 		HeterogeneousMessage *testMessage = dynamic_cast<HeterogeneousMessage *>(msg);
 		std::cout << "Received message " << msg->getFullName() << " from " << testMessage->getSourceAddress() << std::endl;
 	}
-}
+}*/
