@@ -14,6 +14,13 @@ void CarApp::initialize(int stage) {
 		annotations = AnnotationManagerAccess().getIfExists();
 		ASSERT(annotations);
 	}
+	
+	// Choose car mode
+	if (dblrand() < 0.1) {
+		mode = PARKING;
+	} else {
+		mode = NORMAL;
+	}
 }
 
 void CarApp::onBeacon(WaveShortMessage* wsm) {
