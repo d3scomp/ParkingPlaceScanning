@@ -1,5 +1,6 @@
 #include "ParkingPlaceManagerApp.h"
 #include "../messages/CarStatusMessage_m.h"
+#include "ParkingPlaceCommon.h"
 
 Define_Module(ParkingPlaceManagerApp);
 
@@ -39,7 +40,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	// Handle status message
 	CarStatusMessage *status = dynamic_cast<CarStatusMessage*>(msg);
 	if(status) {
-		std::cout << "### Server received status message from: " << status->getId() << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
+		std::cout << "### Server received status message from: " << status->getId() << " mode: " << static_cast<CarMode>(status->getMode()) << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
 	}
 	
 	

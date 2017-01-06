@@ -45,6 +45,7 @@ void ParkingPlaceScanningApp::reportStatus() {
 	statusMsg->setName("Car status message");
 	
 	statusMsg->setId(getId().c_str());
+	statusMsg->setMode(mode);
 	statusMsg->setRoad(road.c_str());
 	statusMsg->setHeading(heading);
 	statusMsg->setPosition(position);

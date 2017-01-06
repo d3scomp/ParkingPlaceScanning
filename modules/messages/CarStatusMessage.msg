@@ -8,6 +8,7 @@ class noncobject Coord;
 
 message CarStatusMessage extends HeterogeneousMessage {
 	string id;
+	int mode;
 	Coord position;
 	double heading;
 	string road;
