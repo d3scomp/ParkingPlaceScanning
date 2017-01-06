@@ -1,5 +1,8 @@
+#include <simtime.h>
+
 #include "ParkingPlaceScanningApp.h"
 #include "../messages/CarStatusMessage_m.h"
+#include "../messages/ScanDataMessage_m.h"
 
 Define_Module(ParkingPlaceScanningApp);
 
@@ -25,6 +28,9 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		
 		// Schedule status reporting
 		scheduleAt(simTime() + uniform(0, 1), &reportStatusMsg);
+		
+		// Schedule scan TODO: Start scanning on request from server
+		scheduleAt(simTime() + uniform(0, 1), &scanTriggerMsg);
 		
 		std::cout << getId() << ": INITIALIZED" << std::endl;
 	}
@@ -79,6 +85,20 @@ void ParkingPlaceScanningApp::callForScan() {
 	send(serverMessage, toDecisionMaker);
 }
 
+void ParkingPlaceScanningApp::scan() {
+	std:: cout << "### " << getId() << " sending scan data" << std::endl;
+	
+	ScanDataMessage *scanMsg = new ScanDataMessage();
+	scanMsg->setName("Scan data");
+	scanMsg->setByteLength(SCAN_SIZE);
+	
+	scanMsg->setNetworkType(LTE);
+	scanMsg->setDestinationAddress("server");
+	scanMsg->setSourceAddress(getId().c_str());
+	
+	send(scanMsg, toDecisionMaker);
+}
+
 void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 	if (msg->isSelfMessage()) {
 		if(msg == &reportStatusMsg) {
@@ -87,6 +107,9 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 		} else if (msg == &callForScanMsg) {
 			callForScan();
 			scheduleAt(simTime() + CALL_DELAY_S, &callForScanMsg);
+		} else if (msg == &scanTriggerMsg) {
+			scan();
+			scheduleAt(SimTime(simTime()) + SimTime(SCAN_DELAY_MS, SIMTIME_MS), &scanTriggerMsg);// TODO: terminate trigger
 		} else {
 			std::cerr << "Unknown self message received by " << getId() << std::endl;
 		}

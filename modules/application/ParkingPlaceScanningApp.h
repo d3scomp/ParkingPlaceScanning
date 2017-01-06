@@ -27,12 +27,16 @@ protected:
 private:
 	const uint64_t CALL_DELAY_S = 1;
 	const uint64_t STATUS_DELAY_S = 1;
+	const uint64_t SCAN_DELAY_MS = 42; // @ 24 FPS
+	const uint64_t SCAN_SIZE = 640*480*3; // 648x480 @ 24bit color
 	
 	cMessage reportStatusMsg;
 	cMessage callForScanMsg;
+	cMessage scanTriggerMsg;
 	
 	void reportStatus();
 	void callForScan();
+	void scan();
 };
 
 #endif // PARKINGPLACESCANNINGAPP_H
