@@ -32,13 +32,19 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 		std::cout << mobility->getExternalId() << ": Calling for assistance" << std::endl;
 		HeterogeneousMessage *callMessage = new HeterogeneousMessage();
 		callMessage->setNetworkType(DSRC);
-		callMessage->setName("Heterogeneous call for assistance message");
-		callMessage->setByteLength(10);
-		
-		callMessage->setDestinationAddress("0"); // BROADCAST?
-		
+		callMessage->setName("DSCR call for assistance message");
+		callMessage->setByteLength(10);		
+		callMessage->setDestinationAddress("0"); // BROADCAST
 		callMessage->setSourceAddress(mobility->getExternalId().c_str());
 		send(callMessage, toDecisionMaker);
+		
+		HeterogeneousMessage* serverMessage = new HeterogeneousMessage();
+		serverMessage->setName("LTE call for assistance message");
+		serverMessage->setByteLength(10);
+		serverMessage->setNetworkType(LTE);
+		serverMessage->setDestinationAddress("server");
+		serverMessage->setSourceAddress(mobility->getExternalId().c_str());
+		send(serverMessage, toDecisionMaker);
 		
 		scheduleAt(simTime() + 1, new cMessage("CallForAssistance"));
 	} else {
