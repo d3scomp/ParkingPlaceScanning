@@ -4,5 +4,8 @@ cplusplus {{
 
 class HeterogeneousMessage;
 
-message ScanData extends HeterogeneousMessage {
+message ScanRequestMessage extends HeterogeneousMessage {
+	// position
+	// heading
+	double heading;
 } 

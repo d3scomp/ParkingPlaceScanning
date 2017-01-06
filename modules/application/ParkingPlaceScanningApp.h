@@ -6,27 +6,33 @@
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 #include "veins/base/utils/SimpleLogger.h"
 
-/**
- * Car operation mode
- */
-enum CarMode {
-	NORMAL, /// Car is driving from A to B, normal traffic
-	PARKING /// Car is willing to park, will request assitance from others
-};
+#include "ParkingPlaceCommon.h"
 
 /**
  * Car application module
  */
 class ParkingPlaceScanningApp : public cSimpleModule {
-	protected:
-		int toDecisionMaker;
-		int fromDecisionMaker;
-		Veins::TraCIMobility* mobility;
+protected:
+	int toDecisionMaker;
+	int fromDecisionMaker;
+	Veins::TraCIMobility* mobility;
 	
-		CarMode mode = NORMAL;
+	CarMode mode = NORMAL;
 
-		virtual void initialize(int stage);
-		virtual void handleMessage(cMessage *msg);
+	virtual void initialize(int stage);
+	virtual void handleMessage(cMessage *msg);
+	
+	std::string getId();
+
+private:
+	const uint64_t CALL_DELAY_S = 1;
+	const uint64_t STATUS_DELAY_S = 1;
+	
+	cMessage reportStatusMsg;
+	cMessage callForScanMsg;
+	
+	void reportStatus();
+	void callForScan();
 };
 
 #endif // PARKINGPLACESCANNINGAPP_H

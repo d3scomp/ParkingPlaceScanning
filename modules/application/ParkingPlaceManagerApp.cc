@@ -1,4 +1,5 @@
 #include "ParkingPlaceManagerApp.h"
+#include "../messages/CarStatusMessage_m.h"
 
 Define_Module(ParkingPlaceManagerApp);
 
@@ -19,10 +20,11 @@ void ParkingPlaceManagerApp::finish(){
 
 
 void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
+	// Handle generic heterogenous message
 	HeterogeneousMessage* heterogeneousMessage = dynamic_cast<HeterogeneousMessage*>(msg);
 	if(heterogeneousMessage){
 		std::string sourceAddress = heterogeneousMessage->getSourceAddress();
-		std::cout << "Received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << std::endl;
+		std::cout << "### Server received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << std::endl;
 
 		// Server replies with a simple message. Note that no additional parameters (like exact
 		// message size) are set and therefore transmission will more likely succeed. If you use
@@ -33,6 +35,14 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		std::cout << "Sending Message back to " << address << std::endl;
 		socket.sendTo(reply, address, 4242);
 	}
+	
+	// Handle status message
+	CarStatusMessage *status = dynamic_cast<CarStatusMessage*>(msg);
+	if(status) {
+		std::cout << "### Server received status message from: " << status->getId() << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
+	}
+	
+	
 	delete msg;
 }
 
