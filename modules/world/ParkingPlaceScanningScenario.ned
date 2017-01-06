@@ -13,7 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package cz.cuni.d3s.parkingplacescanning;
+package cz.cuni.d3s.parkingplacescanning.modules.world;
 
 import org.car2x.veins.base.connectionManager.ConnectionManager;
 import org.car2x.veins.base.modules.BaseWorldUtility;
