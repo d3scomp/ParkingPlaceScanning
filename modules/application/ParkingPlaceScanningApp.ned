@@ -21,9 +21,9 @@
 package cz.cuni.d3s.parkingplacescanning.modules.application;
 import org.car2x.veins.modules.application.ieee80211p.BaseWaveApplLayer;
 
-simple CarApp extends BaseWaveApplLayer
+simple ParkingPlaceScanningApp
 {
-    @class(CarApp);
+    @class(ParkingPlaceScanningApp);
     @display("i=block/app2");
 	
     gates:

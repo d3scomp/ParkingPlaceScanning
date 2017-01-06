@@ -1,5 +1,5 @@
-#ifndef CARAPP_H
-#define CARAPP_H
+#ifndef PARKINGPLACESCANNINGAPP_H
+#define PARKINGPLACESCANNINGAPP_H
 
 #include "veins/modules/heterogeneous/messages/HeterogeneousMessage_m.h"
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
@@ -17,7 +17,7 @@ enum CarMode {
 /**
  * Car application module
  */
-class CarApp : public cSimpleModule {
+class ParkingPlaceScanningApp : public cSimpleModule {
 	protected:
 		int toDecisionMaker;
 		int fromDecisionMaker;
@@ -29,4 +29,4 @@ class CarApp : public cSimpleModule {
 		virtual void handleMessage(cMessage *msg);
 };
 
-#endif
+#endif // PARKINGPLACESCANNINGAPP_H

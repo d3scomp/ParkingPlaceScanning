@@ -1,8 +1,8 @@
-#include "modules/application/CarApp.h"
+#include "modules/application/ParkingPlaceScanningApp.h"
 
-Define_Module(CarApp);
+Define_Module(ParkingPlaceScanningApp);
 
-void CarApp::initialize(int stage) {
+void ParkingPlaceScanningApp::initialize(int stage) {
 	if (stage == 0) {
 		toDecisionMaker = findGate("toDecisionMaker");
 		fromDecisionMaker = findGate("fromDecisionMaker");
@@ -11,29 +11,36 @@ void CarApp::initialize(int stage) {
 		ASSERT(mobility);
 		
 		// Choose car mode
-		if (dblrand() < 0.1) {
+		if (dblrand() < 0.5) {
 			mode = PARKING;
 		} else {
 			mode = NORMAL;
 		}
 		
 		// Schedule parking assistance request
-		scheduleAt(simTime() + uniform(0, 1), new cMessage("CallForAssistance"));
+		if (mode == PARKING) {
+			scheduleAt(simTime() + uniform(0, 1), new cMessage("CallForAssistance"));
+		}
 		
-		std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX INITIALIZED XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
+		std::cout << mobility->getExternalId() << ": INITIALIZED" << std::endl;
 	}
 }
 
-void CarApp::handleMessage(cMessage *msg) {
+void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 	if (msg->isSelfMessage()) {
 		// Call for parking assistance
+		std::cout << mobility->getExternalId() << ": Calling for assistance" << std::endl;
 		HeterogeneousMessage *callMessage = new HeterogeneousMessage();
-		callMessage->setNetworkType(DONTCARE);
+		callMessage->setNetworkType(DSRC);
 		callMessage->setName("Heterogeneous call for assistance message");
 		callMessage->setByteLength(10);
 		
 		callMessage->setDestinationAddress("0"); // BROADCAST?
 		
+		callMessage->setSourceAddress(mobility->getExternalId().c_str());
+		send(callMessage, toDecisionMaker);
+		
+		scheduleAt(simTime() + 1, new cMessage("CallForAssistance"));
 	} else {
 		HeterogeneousMessage *testMessage = dynamic_cast<HeterogeneousMessage *>(msg);
 		std::cout << "Received message " << msg->getFullName() << " from " << testMessage->getSourceAddress() << std::endl;

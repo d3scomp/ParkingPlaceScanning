@@ -4,7 +4,7 @@
 //
 // This car module provides two interfaces for sending and receiving messages via LTE and/or DSRC.
 
-package cz.cuni.d3s.parkingplacescanning;
+package cz.cuni.d3s.parkingplacescanning.modules.nodes;
 
 import org.car2x.veins.base.modules.*;
 import org.car2x.veins.modules.nic.Nic80211p;
@@ -25,13 +25,15 @@ import inet.base.NotificationBoard;
 import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.autorouting.ipv4.HostAutoConfigurator;
 
-import cz.cuni.d3s.parkingplacescanning.modules.application.CarApp;
+import cz.cuni.d3s.parkingplacescanning.modules.application.ParkingPlaceScanningApp;
 
 module HeterogeneousCar {
     parameters:
         @node();
 
-        string applType;           //type of the application layer
+// Value hardcoded due to no interface implemented
+//        string applType;           //type of the application layer
+
         string veinsmobilityType;  //type of the mobility module
         string mobilityType;       // INET mobility
 
@@ -63,7 +65,7 @@ module HeterogeneousCar {
             @display("p=375,320;is=s");
         }
 
-        application: CarApp {
+        application: ParkingPlaceScanningApp {
             @display("p=196,56;i=block/app2");
         }
 
