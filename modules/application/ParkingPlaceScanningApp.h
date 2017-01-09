@@ -26,12 +26,22 @@ protected:
 
 private:
 	const uint64_t CALL_DELAY_S = 1;
-	const uint64_t STATUS_DELAY_S = 1;
 	
-	const uint64_t SCAN_DELAY_MS = 42; // @ 24 FPS
-	//const uint64_t SCAN_SIZE = 640*480*3; // 648x480 @ 24bit color raw
-	const uint64_t SCAN_SIZE = 27685; // 648x480 @ 24bit color, 30% jpeg, sample image
-	const uint64_t SCAN_SPLIT = 10; // Split each frame into N packets
+	const uint64_t STATUS_DELAY_S = 1;
+	/// Status message size
+	const size_t STATUS_SIZE = 48;
+	
+	/// Interframe delay @ 24 FPS
+	const uint64_t SCAN_DELAY_MS = 42; 
+	/// 648x480 @ 24bit color raw
+	//const uint64_t SCAN_SIZE = 640*480*3; 
+	/// 648x480 @ 24bit color, 30% jpeg, sample image
+	const uint64_t SCAN_SIZE = 27685;
+	/// Split each frame into N packets
+	const uint64_t SCAN_SPLIT = 10; 
+	
+	
+	
 
 	
 	cMessage reportStatusMsg;

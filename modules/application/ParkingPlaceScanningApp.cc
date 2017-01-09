@@ -44,6 +44,7 @@ void ParkingPlaceScanningApp::reportStatus() {
 	const std::string road = mobility->getRoadId();
 	const Coord position = mobility->getCurrentPosition();
 	const double heading = mobility->getAngleRad();
+	const double speed = mobility->getSpeed();
 	
 	std:: cout << "### " << getId() << " reporting status: position: " << position << " heading: " << heading << " road: " << road << std::endl;
 	
@@ -56,7 +57,7 @@ void ParkingPlaceScanningApp::reportStatus() {
 	statusMsg->setHeading(heading);
 	statusMsg->setPosition(position);
 	
-	statusMsg->setByteLength(10);
+	statusMsg->setByteLength(STATUS_SIZE);
 	
 	statusMsg->setNetworkType(LTE);
 	statusMsg->setDestinationAddress("server");
