@@ -90,7 +90,7 @@ void ParkingPlaceScanningApp::scan() {
 	
 	ScanDataMessage *scanMsg = new ScanDataMessage();
 	scanMsg->setName("Scan data");
-	scanMsg->setByteLength(SCAN_SIZE);
+	scanMsg->setByteLength(SCAN_SIZE / SCAN_SPLIT);
 	
 	scanMsg->setNetworkType(LTE);
 	scanMsg->setDestinationAddress("server");
@@ -109,7 +109,7 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 			scheduleAt(simTime() + CALL_DELAY_S, &callForScanMsg);
 		} else if (msg == &scanTriggerMsg) {
 			scan();
-			scheduleAt(SimTime(simTime()) + SimTime(SCAN_DELAY_MS, SIMTIME_MS), &scanTriggerMsg);// TODO: terminate trigger
+			scheduleAt(SimTime(simTime()) + SimTime(SCAN_DELAY_MS / SCAN_SPLIT, SIMTIME_MS), &scanTriggerMsg);// TODO: terminate trigger
 		} else {
 			std::cerr << "Unknown self message received by " << getId() << std::endl;
 		}

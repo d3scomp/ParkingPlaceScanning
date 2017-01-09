@@ -27,8 +27,12 @@ protected:
 private:
 	const uint64_t CALL_DELAY_S = 1;
 	const uint64_t STATUS_DELAY_S = 1;
+	
 	const uint64_t SCAN_DELAY_MS = 42; // @ 24 FPS
-	const uint64_t SCAN_SIZE = 640*480*3; // 648x480 @ 24bit color
+	//const uint64_t SCAN_SIZE = 640*480*3; // 648x480 @ 24bit color raw
+	const uint64_t SCAN_SIZE = 27685; // 648x480 @ 24bit color, 30% jpeg, sample image
+	const uint64_t SCAN_SPLIT = 10; // Split each frame into N packets
+
 	
 	cMessage reportStatusMsg;
 	cMessage callForScanMsg;
