@@ -37,7 +37,7 @@ network ParkingPlaceScanningScenario {
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
-        @display("bgb=732,483");
+        @display("bgb=2600,2000");
         int numUe = default(100);
 
     submodules:
