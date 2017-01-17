@@ -93,6 +93,7 @@ void ParkingPlaceScanningApp::scan() {
 	ScanDataMessage *scanMsg = new ScanDataMessage();
 	scanMsg->setName("Scan data");
 	scanMsg->setByteLength(SCAN_SIZE / SCAN_SPLIT);
+	scanMsg->setPosition(mobility->getCurrentPosition());
 	
 	scanMsg->setNetworkType(LTE);
 	scanMsg->setDestinationAddress("server");
