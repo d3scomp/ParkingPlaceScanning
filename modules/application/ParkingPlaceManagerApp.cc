@@ -3,6 +3,8 @@
 #include "ParkingPlaceManagerApp.h"
 #include "../messages/CarStatusMessage_m.h"
 #include "../messages/ScanRequestMessage_m.h"
+#include "../messages/ScanDataMessage_m.h"
+#include "../messages/ScanResultMessage_m.h"
 #include "ParkingPlaceCommon.h"
 
 Define_Module(ParkingPlaceManagerApp);
@@ -30,6 +32,15 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		if(msg == &ensembleMsg) {
 			ensemble();
 			scheduleAt(SimTime(simTime()) + SimTime(ENSEMBLE_PERIOD_MS, SIMTIME_MS), &ensembleMsg);
+		} else {
+			ScanResultMessage *resultMsg = dynamic_cast<ScanResultMessage *>(msg);
+			if(resultMsg) {
+				std:: cout << "### Processing time passed, redirecting result message to " << resultMsg->getDestinationAddress() << std::endl;
+				IPv4Address address = manager->getIPAddressForID(resultMsg->getDestinationAddress());
+				socket.sendTo(resultMsg, address, 4242);
+			} else {
+				std::cout << "SERVER RECEIVED UNHLANDLED SELF MESSAGE" << std::endl;
+			}
 		}
 		return;
 	}
@@ -57,6 +68,31 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		
 		CarRecord record = {simTime(), status->getId(), static_cast<CarMode>(status->getMode()), status->getPosition(), status->getRoad(), status->getHeading(), status->getSpeed()};
 		records[record.name] = record;
+	}
+	
+	// Handle scan data
+	ScanDataMessage *scan = dynamic_cast<ScanDataMessage *>(msg);
+	if(scan) {
+		std::cout << "Received scan data from position " << scan->getPosition() << " at " << scan->getDataTimestamp() << std::endl;
+		
+		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
+		if(requester == scanToRequester.end()) {
+			std:: cout << "### Received data for nonexistent scan request -> dropping" << std::endl;
+		} else {
+			// Create result message and deliver it with delay to self, it will be resend later to recipient
+			ScanResultMessage *resultMsg = new ScanResultMessage("Scan result");
+			
+			resultMsg->setDataTimestamp(scan->getDataTimestamp());
+			resultMsg->setPosition(scan->getPosition());
+			
+			resultMsg->setByteLength(64);
+			resultMsg->setNetworkType(LTE);
+			resultMsg->setDestinationAddress(requester->second.c_str());
+			resultMsg->setSourceAddress("server");
+			
+			// Send message to self, will be redirected afther processing time to requester
+			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), resultMsg);
+		}
 	}
 	
 	delete msg;

@@ -8,4 +8,5 @@ class noncobject Coord;
 
 message ScanDataMessage extends HeterogeneousMessage {
 	Coord position;
+	double dataTimestamp;
 }
