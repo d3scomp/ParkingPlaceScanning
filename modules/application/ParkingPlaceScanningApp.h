@@ -40,6 +40,7 @@ private:
 	/// Split each frame into N packets
 	const uint64_t SCAN_SPLIT = 10; 
 	
+	double scanUntil = 0;
 	
 	
 

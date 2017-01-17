@@ -3,6 +3,7 @@
 #include "ParkingPlaceScanningApp.h"
 #include "../messages/CarStatusMessage_m.h"
 #include "../messages/ScanDataMessage_m.h"
+#include "../messages/ScanRequestMessage_m.h"
 
 Define_Module(ParkingPlaceScanningApp);
 
@@ -15,22 +16,17 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		ASSERT(mobility);
 		
 		// Choose car mode
-		if (dblrand() < 0.5) {
+		if (dblrand() < 0.2) {
 			mode = PARKING;
 		} else {
 			mode = NORMAL;
 		}
 		
-		// Schedule parking assistance request
-/*		if (mode == PARKING) {
-			scheduleAt(simTime() + uniform(0, 1), &callForScanMsg);
-		}*/
-		
 		// Schedule status reporting
 		scheduleAt(simTime() + uniform(0, 1), &reportStatusMsg);
 		
-		// Schedule scan TODO: Start scanning on request from server
-//		scheduleAt(simTime() + uniform(0, 1), &scanTriggerMsg);
+		// Schedule scan, it is actually perfoemed only when scan until is in the future
+		scheduleAt(simTime() + uniform(0, 1), &scanTriggerMsg);
 		
 		std::cout << getId() << ": INITIALIZED" << std::endl;
 	}
@@ -88,6 +84,10 @@ void ParkingPlaceScanningApp::callForScan() {
 }
 
 void ParkingPlaceScanningApp::scan() {
+	if(simTime() > scanUntil) {
+		return;
+	}
+	
 	std:: cout << "### " << getId() << " sending scan data" << std::endl;
 	
 	ScanDataMessage *scanMsg = new ScanDataMessage();
@@ -118,5 +118,11 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 	} else {
 		HeterogeneousMessage *testMessage = dynamic_cast<HeterogeneousMessage *>(msg);
 		std::cout << "Received message " << msg->getFullName() << " from " << testMessage->getSourceAddress() << std::endl;
+		
+		ScanRequestMessage *requestMsg = dynamic_cast<ScanRequestMessage *>(msg);
+		if(requestMsg) {
+			std::cout << "SCAN REQUEST " << requestMsg->getUntil() << std::endl;
+			scanUntil = requestMsg->getUntil();
+		}
 	}
 }

@@ -43,11 +43,11 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		// Server replies with a simple message. Note that no additional parameters (like exact
 		// message size) are set and therefore transmission will more likely succeed. If you use
 		// this function set it correctly to get realistic results.
-		HeterogeneousMessage *reply = new HeterogeneousMessage("Server Reply");
+/*-		HeterogeneousMessage *reply = new HeterogeneousMessage("Server Reply");
 		IPv4Address address = manager->getIPAddressForID(sourceAddress);
 		reply->setSourceAddress("server");
 		std::cout << "Sending Message back to " << address << std::endl;
-		socket.sendTo(reply, address, 4242);
+		socket.sendTo(reply, address, 4242);*/
 	}
 	
 	// Handle status message
@@ -140,9 +140,11 @@ void ParkingPlaceManagerApp::ensemble() {
 void ParkingPlaceManagerApp::sendInitiateScan(std::string carId) {
 	ScanRequestMessage *requestMsg = new ScanRequestMessage("Scan request");
 	
-	requestMsg->setDuration((simTime() + SimTime(SCAN_REQUEST_DURATION_MS, SIMTIME_MS)));
+	double until = (simTime() + SimTime(SCAN_REQUEST_DURATION_MS, SIMTIME_MS)).dbl();
+	std::cout << "reuqesting scan on " << carId << " until " << until << std::endl;
+ 	requestMsg->setUntil(until);
 	
-	requestMsg->setByteLength(1);
+	requestMsg->setByteLength(32);
 	requestMsg->setNetworkType(LTE);
 	requestMsg->setDestinationAddress(carId.c_str());
 	requestMsg->setSourceAddress("server");
