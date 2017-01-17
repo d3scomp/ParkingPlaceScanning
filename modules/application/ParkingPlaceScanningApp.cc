@@ -1,9 +1,12 @@
+#include <cmath>
+
 #include <simtime.h>
 
 #include "ParkingPlaceScanningApp.h"
 #include "../messages/CarStatusMessage_m.h"
 #include "../messages/ScanDataMessage_m.h"
 #include "../messages/ScanRequestMessage_m.h"
+#include "../messages/ScanResultMessage_m.h"
 
 Define_Module(ParkingPlaceScanningApp);
 
@@ -93,7 +96,7 @@ void ParkingPlaceScanningApp::scan() {
 	ScanDataMessage *scanMsg = new ScanDataMessage();
 	scanMsg->setName("Scan data");
 	scanMsg->setByteLength(SCAN_SIZE / SCAN_SPLIT);
-	scanMsg->setPosition(mobility->getCurrentPosition());
+	scanMsg->setDataPosition(mobility->getCurrentPosition());
 	scanMsg->setDataTimestamp(simTime().dbl());
 	
 	scanMsg->setNetworkType(LTE);
@@ -125,6 +128,27 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 		if(requestMsg) {
 			std::cout << "received scan request until " << requestMsg->getUntil() << std::endl;
 			scanUntil = requestMsg->getUntil();
+		}
+		
+		ScanResultMessage *resultMsg = dynamic_cast<ScanResultMessage *>(msg);
+		if(resultMsg) {
+			double lattency = (simTime() - resultMsg->getDataTimestamp()).dbl();
+			
+			Coord dataPos = resultMsg->getDataPosition();
+			Coord curPos = mobility->getCurrentPosition();
+			double curHeading = mobility->getAngleRad();
+			
+			double distance = curPos.distance(dataPos);
+			Coord diff = dataPos - curPos;
+			double dataHeading = std::atan2(diff.x, diff.y);
+			
+			if(std::abs(dataHeading - curHeading) > M_PI) {
+				distance *= -1;
+			}
+			
+			std:: cout << "### "<< getId() << " received scan result message lattency: " << lattency << " distance (+ = ahead) " << distance << std::endl;
+			
+			std::cout << "Cur Pos: " << curPos << " dataPos" << dataPos << std::endl;
 		}
 	}
 }

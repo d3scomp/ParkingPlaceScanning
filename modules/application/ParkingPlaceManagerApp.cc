@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 
 #include "ParkingPlaceManagerApp.h"
 #include "../messages/CarStatusMessage_m.h"
@@ -73,7 +73,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	// Handle scan data
 	ScanDataMessage *scan = dynamic_cast<ScanDataMessage *>(msg);
 	if(scan) {
-		std::cout << "Received scan data from position " << scan->getPosition() << " at " << scan->getDataTimestamp() << std::endl;
+		std::cout << "Received scan data from position " << scan->getDataPosition() << " at " << scan->getDataTimestamp() << std::endl;
 		
 		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
 		if(requester == scanToRequester.end()) {
@@ -83,7 +83,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 			ScanResultMessage *resultMsg = new ScanResultMessage("Scan result");
 			
 			resultMsg->setDataTimestamp(scan->getDataTimestamp());
-			resultMsg->setPosition(scan->getPosition());
+			resultMsg->setDataPosition(scan->getDataPosition());
 			
 			resultMsg->setByteLength(64);
 			resultMsg->setNetworkType(LTE);
@@ -153,8 +153,8 @@ void ParkingPlaceManagerApp::ensemble() {
 			// Determine prefered scan position
 			Coord scanPos = car.position;
 			double lookahed_m = car.speed * SCAN_LOOKAHEAD_MS / 1000;
-			scanPos.x += lookahed_m * cos(car.heading);
-			scanPos.y += lookahed_m * sin(car.heading);
+			scanPos.x += lookahed_m * std::cos(car.heading);
+			scanPos.y += lookahed_m * std::sin(car.heading);
 			std:: cout << "prefered scan position : " << scanPos << std::endl;
 			
 			// Determine scanner (closest car to prefered scan position)

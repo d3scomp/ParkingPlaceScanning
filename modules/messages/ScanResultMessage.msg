@@ -7,6 +7,6 @@ class HeterogeneousMessage;
 class noncobject Coord;
 
 message ScanResultMessage extends HeterogeneousMessage {
-	Coord position;
+	Coord dataPosition;
 	double dataTimestamp;
 } 
