@@ -59,10 +59,13 @@ public:
 
 private:
 	std::map<std::string, CarRecord> records;
+	std::map<std::string, std::string> scanToRequester; // scanner car -> scan requesting car
 	
 	void dumpRecords();
 	
 	void ensemble();
+	
+	void sendInitiateScan(std::string carId);
 	
 	cMessage ensembleMsg;
 	

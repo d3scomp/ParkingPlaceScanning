@@ -2,6 +2,7 @@
 
 #include "ParkingPlaceManagerApp.h"
 #include "../messages/CarStatusMessage_m.h"
+#include "../messages/ScanRequestMessage_m.h"
 #include "ParkingPlaceCommon.h"
 
 Define_Module(ParkingPlaceManagerApp);
@@ -85,7 +86,7 @@ bool ParkingPlaceManagerApp::handleNodeShutdown(IDoneCallback *doneCallback){
 void ParkingPlaceManagerApp::handleNodeCrash(){}
 
 void ParkingPlaceManagerApp::ensemble() {
-	// Remove old records
+	// Remove old car records
 	std::vector<std::string> tooOld;
 	for(auto record: records) {
 		const CarRecord &car = record.second;
@@ -99,7 +100,11 @@ void ParkingPlaceManagerApp::ensemble() {
 	
 	dumpRecords();
 	std::cout << "### Mapping cars to ensembles" << std::endl;
-		
+	
+	// Erase old mapping
+	scanToRequester.clear();
+	
+	// Determine mapping
 	for(auto record: records) {
 		const CarRecord &car = record.second;
 		
@@ -126,6 +131,22 @@ void ParkingPlaceManagerApp::ensemble() {
 				}
 			}
 			std::cout << "determined scanner: " << closest.toString() << std::endl;
+			scanToRequester[car.name] = closest.name;
+			sendInitiateScan(closest.name);
 		}
 	}
+}
+
+void ParkingPlaceManagerApp::sendInitiateScan(std::string carId) {
+	ScanRequestMessage *requestMsg = new ScanRequestMessage("Scan request");
+	
+	requestMsg->setDuration((simTime() + SimTime(SCAN_REQUEST_DURATION_MS, SIMTIME_MS)));
+	
+	requestMsg->setByteLength(1);
+	requestMsg->setNetworkType(LTE);
+	requestMsg->setDestinationAddress(carId.c_str());
+	requestMsg->setSourceAddress("server");
+	
+	IPv4Address address = manager->getIPAddressForID(carId.c_str());
+	socket.sendTo(requestMsg, address, 4242);
 }
