@@ -41,10 +41,23 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	CarStatusMessage *status = dynamic_cast<CarStatusMessage*>(msg);
 	if(status) {
 		std::cout << "### Server received status message from: " << status->getId() << " mode: " << static_cast<CarMode>(status->getMode()) << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
+		
+		CarRecord record = {status->getId(), static_cast<CarMode>(status->getMode()), status->getPosition(), status->getRoad(), status->getHeading()};
+		records[record.name] = record;
+		
+		dumpRecords();
 	}
 	
 	
 	delete msg;
+}
+
+void ParkingPlaceManagerApp::dumpRecords() {
+	std::cout << "### Records: " << std::endl;
+	for(auto record: records) {
+		std::cout << record.first << ": mode: " << record.second.mode << " pos: " << record.second.position << " road: " << record.second.road << " heading: " << record.second.heading << std::endl;
+	}
+	std::cout << "### End records: " << std::endl;
 }
 
 bool ParkingPlaceManagerApp::handleNodeStart(IDoneCallback *doneCallback){
