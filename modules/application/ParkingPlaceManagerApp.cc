@@ -54,10 +54,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	if(status) {
 		std::cout << "### Server received status message from: " << status->getId() << " mode: " << static_cast<CarMode>(status->getMode()) << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
 		
-		CarRecord record = {status->getId(), static_cast<CarMode>(status->getMode()), status->getPosition(), status->getRoad(), status->getHeading(), status->getSpeed()};
+		CarRecord record = {simTime(), status->getId(), static_cast<CarMode>(status->getMode()), status->getPosition(), status->getRoad(), status->getHeading(), status->getSpeed()};
 		records[record.name] = record;
 	}
-	
 	
 	delete msg;
 }
@@ -86,6 +85,18 @@ bool ParkingPlaceManagerApp::handleNodeShutdown(IDoneCallback *doneCallback){
 void ParkingPlaceManagerApp::handleNodeCrash(){}
 
 void ParkingPlaceManagerApp::ensemble() {
+	// Remove old records
+	std::vector<std::string> tooOld;
+	for(auto record: records) {
+		const CarRecord &car = record.second;
+		if(car.timestamp > (simTime() + SimTime(RECORD_VALIDITY_MS, SIMTIME_MS))) {
+			tooOld.push_back(car.name);
+		}
+	}
+	for(auto key: tooOld) {
+		records.erase(key);
+	}
+	
 	dumpRecords();
 	std::cout << "### Mapping cars to ensembles" << std::endl;
 		
