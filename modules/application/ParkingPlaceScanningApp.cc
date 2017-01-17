@@ -22,15 +22,15 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		}
 		
 		// Schedule parking assistance request
-		if (mode == PARKING) {
+/*		if (mode == PARKING) {
 			scheduleAt(simTime() + uniform(0, 1), &callForScanMsg);
-		}
+		}*/
 		
 		// Schedule status reporting
 		scheduleAt(simTime() + uniform(0, 1), &reportStatusMsg);
 		
 		// Schedule scan TODO: Start scanning on request from server
-		scheduleAt(simTime() + uniform(0, 1), &scanTriggerMsg);
+//		scheduleAt(simTime() + uniform(0, 1), &scanTriggerMsg);
 		
 		std::cout << getId() << ": INITIALIZED" << std::endl;
 	}
@@ -46,7 +46,7 @@ void ParkingPlaceScanningApp::reportStatus() {
 	const double heading = mobility->getAngleRad();
 	const double speed = mobility->getSpeed();
 	
-	std:: cout << "### " << getId() << " reporting status: position: " << position << " heading: " << heading << " road: " << road << std::endl;
+	std:: cout << "### " << getId() << " reporting status: position: " << position << " heading: " << heading << " road: " << road << " speed:" << speed << std::endl;
 	
 	CarStatusMessage *statusMsg = new CarStatusMessage();
 	statusMsg->setName("Car status message");
@@ -56,6 +56,7 @@ void ParkingPlaceScanningApp::reportStatus() {
 	statusMsg->setRoad(road.c_str());
 	statusMsg->setHeading(heading);
 	statusMsg->setPosition(position);
+	statusMsg->setSpeed(speed);
 	
 	statusMsg->setByteLength(STATUS_SIZE);
 	

@@ -17,15 +17,29 @@ protected:
 	UDPSocket socket;
 	Veins::TraCIScenarioManager* manager;
 	
-	struct CarRecord {
+	class CarRecord {
+	public:
 		std::string name;
 		CarMode mode;
 		Coord position;
 		std::string road;
 		double heading;
+		double speed;
+		
+		std::string toString() const {
+			std::stringstream stream;
+
+			stream << name << ": mode: " << mode << " pos: " << position << " road: " << road << " heading: " << heading << " speed: " << speed;
+
+			return stream.str();
+		}
 	};
 
 public:
+	const uint64_t ENSEMBLE_PERIOD_MS = 1000; // How often to pair parking cars and scanning cars
+	const uint64_t SCAN_REQUEST_DURATION_MS = 3000; // How log should the the scanning car send scan data until asked again
+	const uint64_t SCAN_LOOKAHEAD_MS = 5000; // How long does it take the car to park, ideally scan from position that will be reached in this time
+	
 	ParkingPlaceManagerApp();
 	virtual ~ParkingPlaceManagerApp();
 
@@ -45,6 +59,10 @@ private:
 	std::map<std::string, CarRecord> records;
 	
 	void dumpRecords();
+	
+	void ensemble();
+	
+	cMessage ensembleMsg;
 	
 };
 
