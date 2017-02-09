@@ -86,17 +86,17 @@ network ParkingPlaceScanningScenario {
         server1: StandardHost {
             @display("p=1460,940;is=n;i=device/server");
         }
-//        server2: StandardHost {
-//            @display("p=1160,840;is=n;i=device/server");
-//       }
-//        server3: StandardHost {
-//            @display("p=1260,1140;is=n;i=device/server");
-//        }
+        server2: StandardHost {
+            @display("p=1160,840;is=n;i=device/server");
+       }
+        server3: StandardHost {
+            @display("p=1260,1140;is=n;i=device/server");
+        }
         routingRecorder: RoutingTableRecorder {
             @display("p=34,274;is=s");
         }
     connections allowunconnected:
         server1.pppg++ <--> Eth10G <--> eNodeB1.ppp;
-//		server2.pppg++ <--> Eth10G <--> eNodeB2.ppp;
-//		server3.pppg++ <--> Eth10G <--> eNodeB3.ppp;
+		server2.pppg++ <--> Eth10G <--> eNodeB2.ppp;
+		server3.pppg++ <--> Eth10G <--> eNodeB3.ppp;
 }
