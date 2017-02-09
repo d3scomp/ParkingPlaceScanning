@@ -60,7 +60,7 @@ void ParkingPlaceScanningApp::reportStatus() {
 	statusMsg->setByteLength(STATUS_SIZE);
 	
 	statusMsg->setNetworkType(LTE);
-	statusMsg->setDestinationAddress("server");
+	statusMsg->setDestinationAddress(SERVER.c_str());
 	statusMsg->setSourceAddress(getId().c_str());
 	
 	send(statusMsg, toDecisionMaker);
@@ -81,7 +81,7 @@ void ParkingPlaceScanningApp::callForScan() {
 	serverMessage->setName("LTE call for assistance message");
 	serverMessage->setByteLength(10);
 	serverMessage->setNetworkType(LTE);
-	serverMessage->setDestinationAddress("server");
+	serverMessage->setDestinationAddress(SERVER.c_str());
 	serverMessage->setSourceAddress(getId().c_str());
 	send(serverMessage, toDecisionMaker);
 }

@@ -56,7 +56,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		// this function set it correctly to get realistic results.
 /*-		HeterogeneousMessage *reply = new HeterogeneousMessage("Server Reply");
 		IPv4Address address = manager->getIPAddressForID(sourceAddress);
-		reply->setSourceAddress("server");
+		reply->setSourceAddress(SERVER.c_str());
 		std::cout << "Sending Message back to " << address << std::endl;
 		socket.sendTo(reply, address, 4242);*/
 	}
@@ -88,7 +88,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 			resultMsg->setByteLength(64);
 			resultMsg->setNetworkType(LTE);
 			resultMsg->setDestinationAddress(requester->second.c_str());
-			resultMsg->setSourceAddress("server");
+			resultMsg->setSourceAddress(SERVER.c_str());
 			
 			// Send message to self, will be redirected afther processing time to requester
 			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), resultMsg);
@@ -183,7 +183,7 @@ void ParkingPlaceManagerApp::sendInitiateScan(std::string carId) {
 	requestMsg->setByteLength(32);
 	requestMsg->setNetworkType(LTE);
 	requestMsg->setDestinationAddress(carId.c_str());
-	requestMsg->setSourceAddress("server");
+	requestMsg->setSourceAddress(SERVER.c_str());
 	
 	IPv4Address address = manager->getIPAddressForID(carId.c_str());
 	socket.sendTo(requestMsg, address, 4242);
