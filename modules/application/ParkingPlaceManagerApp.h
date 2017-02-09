@@ -37,7 +37,7 @@ protected:
 	};
 
 public:
-	const std::string SERVER = "server1";
+	const std::string SERVER = "server2";
 	
 	const uint64_t ENSEMBLE_PERIOD_MS = 1000; // How often to pair parking cars and scanning cars
 	const uint64_t SCAN_REQUEST_DURATION_MS = 3000; // How log should the the scanning car send scan data until asked again

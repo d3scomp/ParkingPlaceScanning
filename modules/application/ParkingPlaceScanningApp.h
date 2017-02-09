@@ -25,7 +25,7 @@ protected:
 	std::string getId();
 
 private:
-	const std::string SERVER = "server1";
+	const std::string SERVER = "server2";
 	
 	const uint64_t CALL_DELAY_S = 1;
 	
