@@ -77,12 +77,12 @@ network ParkingPlaceScanningScenario {
         eNodeB1: eNodeB {
             @display("p=1490,950;is=vl");
         }
-//        eNodeB2: eNodeB {
-//            @display("p=1240,850;is=vl");
-//        }
-//        eNodeB3: eNodeB {
-//            @display("p=1240,1000;is=vl");
- //       }
+        eNodeB2: eNodeB {
+            @display("p=1240,850;is=vl");
+        }
+        eNodeB3: eNodeB {
+            @display("p=1240,1000;is=vl");
+        }
         server: StandardHost {
             @display("p=1460,940;is=n;i=device/server");
         }
