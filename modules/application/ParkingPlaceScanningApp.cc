@@ -100,7 +100,7 @@ void ParkingPlaceScanningApp::scan() {
 	scanMsg->setDataTimestamp(simTime().dbl());
 	
 	scanMsg->setNetworkType(LTE);
-	scanMsg->setDestinationAddress("server");
+	scanMsg->setDestinationAddress(SERVER.c_str());
 	scanMsg->setSourceAddress(getId().c_str());
 	
 	send(scanMsg, toDecisionMaker);
