@@ -35,7 +35,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		} else {
 			ScanResultMessage *resultMsg = dynamic_cast<ScanResultMessage *>(msg);
 			if(resultMsg) {
-				std:: cout << "### Processing time passed, redirecting result message to " << resultMsg->getDestinationAddress() << std::endl;
+				std:: cout << "### " << getParentModule()->getName() << " Processing time passed, redirecting result message to " << resultMsg->getDestinationAddress() << std::endl;
 				IPv4Address address = manager->getIPAddressForID(resultMsg->getDestinationAddress());
 				socket.sendTo(resultMsg, address, 4242);
 			} else {
@@ -49,7 +49,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	HeterogeneousMessage* heterogeneousMessage = dynamic_cast<HeterogeneousMessage*>(msg);
 	if(heterogeneousMessage){
 		std::string sourceAddress = heterogeneousMessage->getSourceAddress();
-		std::cout << "### Server received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << std::endl;
+		std::cout << "### " << getParentModule()->getName() << " received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << std::endl;
 
 		// Server replies with a simple message. Note that no additional parameters (like exact
 		// message size) are set and therefore transmission will more likely succeed. If you use
@@ -64,7 +64,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	// Handle status message
 	CarStatusMessage *status = dynamic_cast<CarStatusMessage*>(msg);
 	if(status) {
-		std::cout << "### Server received status message from: " << status->getId() << " mode: " << static_cast<CarMode>(status->getMode()) << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
+		std::cout << "### " << getParentModule()->getName() << " received status message from: " << status->getId() << " mode: " << static_cast<CarMode>(status->getMode()) << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
 		
 		CarRecord record = {simTime(), status->getId(), static_cast<CarMode>(status->getMode()), status->getPosition(), status->getRoad(), status->getHeading(), status->getSpeed()};
 		records[record.name] = record;
@@ -77,7 +77,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		
 		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
 		if(requester == scanToRequester.end()) {
-			std:: cout << "### Received data for nonexistent scan request -> dropping" << std::endl;
+			std:: cout << "### " << getParentModule()->getName() << " received data for nonexistent scan request -> dropping" << std::endl;
 		} else {
 			// Create result message and deliver it with delay to self, it will be resend later to recipient
 			ScanResultMessage *resultMsg = new ScanResultMessage("Scan result");
@@ -99,7 +99,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 }
 
 void ParkingPlaceManagerApp::dumpRecords() {
-	std::cout << "### Records: " << std::endl;
+	std::cout << "### " << getParentModule()->getName() << " Records: " << std::endl;
 	for(auto record: records) {
 		const CarRecord &car = record.second;
 		//std::cout << record.first << ": mode: " << car.mode << " pos: " << car.position << " road: " << car.road << " heading: " << car.heading << " speed: " << car.speed << std::endl;
@@ -135,7 +135,7 @@ void ParkingPlaceManagerApp::ensemble() {
 	}
 	
 	dumpRecords();
-	std::cout << "### Mapping cars to ensembles" << std::endl;
+	std::cout << "### " << getParentModule()->getName() << " Mapping cars to ensembles" << std::endl;
 	
 	// Erase old mapping
 	scanToRequester.clear();
@@ -177,7 +177,7 @@ void ParkingPlaceManagerApp::sendInitiateScan(std::string carId) {
 	ScanRequestMessage *requestMsg = new ScanRequestMessage("Scan request");
 	
 	double until = (simTime() + SimTime(SCAN_REQUEST_DURATION_MS, SIMTIME_MS)).dbl();
-	std::cout << "reuqesting scan on " << carId << " until " << until << std::endl;
+	std::cout << "### " << getParentModule()->getName() << "reuqesting scan on " << carId << " until " << until << std::endl;
  	requestMsg->setUntil(until);
 	
 	requestMsg->setByteLength(32);
