@@ -35,7 +35,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		} else {
 			ScanResultMessage *resultMsg = dynamic_cast<ScanResultMessage *>(msg);
 			if(resultMsg) {
-				std:: cout << "### " << getParentModule()->getName() << " Processing time passed, redirecting result message to " << resultMsg->getDestinationAddress() << std::endl;
+				std:: cout << "### " << getServerName() << " Processing time passed, redirecting result message to " << resultMsg->getDestinationAddress() << std::endl;
 				IPv4Address address = manager->getIPAddressForID(resultMsg->getDestinationAddress());
 				socket.sendTo(resultMsg, address, 4242);
 			} else {
@@ -49,14 +49,14 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	HeterogeneousMessage* heterogeneousMessage = dynamic_cast<HeterogeneousMessage*>(msg);
 	if(heterogeneousMessage){
 		std::string sourceAddress = heterogeneousMessage->getSourceAddress();
-		std::cout << "### " << getParentModule()->getName() << " received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << std::endl;
+		std::cout << "### " << getServerName() << " received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << std::endl;
 
 		// Server replies with a simple message. Note that no additional parameters (like exact
 		// message size) are set and therefore transmission will more likely succeed. If you use
 		// this function set it correctly to get realistic results.
 /*-		HeterogeneousMessage *reply = new HeterogeneousMessage("Server Reply");
 		IPv4Address address = manager->getIPAddressForID(sourceAddress);
-		reply->setSourceAddress(SERVER.c_str());
+		reply->setSourceAddress(getServerName());
 		std::cout << "Sending Message back to " << address << std::endl;
 		socket.sendTo(reply, address, 4242);*/
 	}
@@ -64,7 +64,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	// Handle status message
 	CarStatusMessage *status = dynamic_cast<CarStatusMessage*>(msg);
 	if(status) {
-		std::cout << "### " << getParentModule()->getName() << " received status message from: " << status->getId() << " mode: " << static_cast<CarMode>(status->getMode()) << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
+		std::cout << "### " << getServerName() << " received status message from: " << status->getId() << " mode: " << static_cast<CarMode>(status->getMode()) << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
 		
 		CarRecord record = {simTime(), status->getId(), static_cast<CarMode>(status->getMode()), status->getPosition(), status->getRoad(), status->getHeading(), status->getSpeed()};
 		records[record.name] = record;
@@ -77,7 +77,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		
 		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
 		if(requester == scanToRequester.end()) {
-			std:: cout << "### " << getParentModule()->getName() << " received data for nonexistent scan request -> dropping" << std::endl;
+			std:: cout << "### " << getServerName() << " received data for nonexistent scan request -> dropping" << std::endl;
 		} else {
 			// Create result message and deliver it with delay to self, it will be resend later to recipient
 			ScanResultMessage *resultMsg = new ScanResultMessage("Scan result");
@@ -88,7 +88,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 			resultMsg->setByteLength(64);
 			resultMsg->setNetworkType(LTE);
 			resultMsg->setDestinationAddress(requester->second.c_str());
-			resultMsg->setSourceAddress(SERVER.c_str());
+			resultMsg->setSourceAddress(getServerName());
 			
 			// Send message to self, will be redirected afther processing time to requester
 			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), resultMsg);
@@ -99,7 +99,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 }
 
 void ParkingPlaceManagerApp::dumpRecords() {
-	std::cout << "### " << getParentModule()->getName() << " Records: " << std::endl;
+	std::cout << "### " << getServerName() << " Records: " << std::endl;
 	for(auto record: records) {
 		const CarRecord &car = record.second;
 		//std::cout << record.first << ": mode: " << car.mode << " pos: " << car.position << " road: " << car.road << " heading: " << car.heading << " speed: " << car.speed << std::endl;
@@ -135,7 +135,7 @@ void ParkingPlaceManagerApp::ensemble() {
 	}
 	
 	dumpRecords();
-	std::cout << "### " << getParentModule()->getName() << " Mapping cars to ensembles" << std::endl;
+	std::cout << "### " << getServerName() << " Mapping cars to ensembles" << std::endl;
 	
 	// Erase old mapping
 	scanToRequester.clear();
@@ -177,14 +177,18 @@ void ParkingPlaceManagerApp::sendInitiateScan(std::string carId) {
 	ScanRequestMessage *requestMsg = new ScanRequestMessage("Scan request");
 	
 	double until = (simTime() + SimTime(SCAN_REQUEST_DURATION_MS, SIMTIME_MS)).dbl();
-	std::cout << "### " << getParentModule()->getName() << "reuqesting scan on " << carId << " until " << until << std::endl;
+	std::cout << "### " << getServerName() << "reuqesting scan on " << carId << " until " << until << std::endl;
  	requestMsg->setUntil(until);
 	
 	requestMsg->setByteLength(32);
 	requestMsg->setNetworkType(LTE);
 	requestMsg->setDestinationAddress(carId.c_str());
-	requestMsg->setSourceAddress(SERVER.c_str());
+	requestMsg->setSourceAddress(getServerName());
 	
 	IPv4Address address = manager->getIPAddressForID(carId.c_str());
 	socket.sendTo(requestMsg, address, 4242);
+}
+
+const char* ParkingPlaceManagerApp::getServerName() {
+	return getParentModule()->getName();
 }
