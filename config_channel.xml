@@ -49,7 +49,7 @@
 			<!-- if true, enables the in-cell interference computation -->
             <parameter name="inCell-interference" type="bool" value="true"/>
 			<!-- if true, enables the multi-cell interference computation -->
-			<!--			<parameter name="multiCell-interference" type="bool" value="true"/> -->
+			<parameter name="multiCell-interference" type="bool" value="true"/>
         </ChannelModel>        
              
         <!-- Feedback Type (REAL, DUMMY) -->
