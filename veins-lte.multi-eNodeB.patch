@@ -1,0 +1,53 @@
+diff -Naur veins-lte.vanilla/veins/src/veins/modules/lte/BasicDecisionMaker.cc veins-lte.modified/veins/src/veins/modules/lte/BasicDecisionMaker.cc
+--- veins-lte.vanilla/veins/src/veins/modules/lte/BasicDecisionMaker.cc	2016-10-17 10:05:00.000000000 +0200
++++ veins-lte.modified/veins/src/veins/modules/lte/BasicDecisionMaker.cc	2017-02-10 12:41:16.591662946 +0100
+@@ -105,7 +105,13 @@
+ 	        WARN_ID("Unknown message of kind " << messageKind);
+ 	    }
+ 	    emit(lteMessagesReceived, 1);
+-		MobilityBase* eNodeBMobility = dynamic_cast<MobilityBase*>(getModuleByPath("scenario.eNodeB1")->getSubmodule("mobility"));
++		
++		//////////////////////////// TODO FIXME HACK ////////////////////////////////////////
++		// This code does not handle multiple eNodeBs. Lets get X in eNodeBX from car's masterId
++		const std::string eNodeB = "scenario.eNodeB" + getParentModule()->par("masterId").str();
++		//////////////////////////// TODO FIXME HACK ////////////////////////////////////////
++		
++		MobilityBase* eNodeBMobility = dynamic_cast<MobilityBase*>(getModuleByPath(eNodeB.c_str())->getSubmodule("mobility"));
+ 		ASSERT(eNodeBMobility);
+ 		AnnotationManager* annotations = AnnotationManagerAccess().getIfExists();
+ 		annotations->scheduleErase(0.25,annotations->drawLine(eNodeBMobility->getCurrentPosition(), getPosition(),"yellow"));
+diff -Naur veins-lte.vanilla/veins/src/veins/modules/mobility/traci/TraCIScenarioManager.cc veins-lte.modified/veins/src/veins/modules/mobility/traci/TraCIScenarioManager.cc
+--- veins-lte.vanilla/veins/src/veins/modules/mobility/traci/TraCIScenarioManager.cc	2016-10-17 10:05:00.000000000 +0200
++++ veins-lte.modified/veins/src/veins/modules/mobility/traci/TraCIScenarioManager.cc	2017-02-10 12:39:13.871668062 +0100
+@@ -476,8 +476,14 @@
+ 			<< ", its address " << idToAddress[nodeId]
+ 			<< " and the MacNodeId " << macNodeId << std::endl;
+ 	}
++	
++	//////////////////////////// TODO FIXME HACK ////////////////////////////////////////
++	// This code does not handle multiple eNodeBs. Lets get X in eNodeBX from car's masterId
++	const std::string eNodeB = "eNodeB" + mod->par("masterId").str();
++	//////////////////////////// TODO FIXME HACK ////////////////////////////////////////
++	
+ 	LteAmc *amc = check_and_cast<LteMacEnb *>(
+-			getParentModule()->getSubmodule("eNodeB1")->getSubmodule("nic")->getSubmodule("mac")
++			getParentModule()->getSubmodule(eNodeB.c_str())->getSubmodule("nic")->getSubmodule("mac")
+ 			)->getAmc();
+ 	amc->attachUser(binder->getMacNodeIdFromOmnetId(mod->getId()), UL);
+ 	amc->attachUser(binder->getMacNodeIdFromOmnetId(mod->getId()), DL);
+@@ -504,9 +510,14 @@
+ 			<< " with IP " << idToAddress[nodeId]
+ 			<< " and MacNodeId " << macNodeIds[mod->getId()] << std::endl;
+ 	}
++	
++	//////////////////////////// TODO FIXME HACK ////////////////////////////////////////
++	// This code does not handle multiple eNodeBs. Lets get X in eNodeBX from car's masterId
++	const std::string eNodeB = "eNodeB" + mod->par("masterId").str();
++	//////////////////////////// TODO FIXME HACK ////////////////////////////////////////
+ 
+ 	cModule* macModule = getParentModule()->
+-		getSubmodule("eNodeB1")->getSubmodule("nic")->getSubmodule("mac");
++		getSubmodule(eNodeB.c_str())->getSubmodule("nic")->getSubmodule("mac");
+ 	LteMacEnb* mac = dynamic_cast<LteMacEnb*>(macModule);
+ 	if(!mac){
+ 		std::cout << "Not MAC" << std::endl;
