@@ -18,6 +18,9 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		mobility = dynamic_cast<Veins::TraCIMobility *>(getParentModule()->getSubmodule("veinsmobility"));
 		ASSERT(mobility);
 		
+		// Determine server name
+		SERVER = "server" + getParentModule()->par("masterId").str();
+		
 		// Choose car mode
 		if (dblrand() < 0.2) {
 			mode = PARKING;
