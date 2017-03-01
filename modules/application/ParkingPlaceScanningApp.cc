@@ -10,7 +10,16 @@
 
 Define_Module(ParkingPlaceScanningApp);
 
+ParkingPlaceScanningApp::ParkingPlaceScanningApp() {
+	std::cout << "ParkingPlaceScanningApp: constructor" << std::endl;
+}
+
+ParkingPlaceScanningApp::~ParkingPlaceScanningApp() {
+	std::cout << "ParkingPlaceScanningApp: destructor" << std::endl;
+}
+
 void ParkingPlaceScanningApp::initialize(int stage) {
+	std::cout << "ParkingPlaceScanningApp: initialize stage: " << stage << std::endl;
 	if (stage == 0) {
 		toDecisionMaker = findGate("toDecisionMaker");
 		fromDecisionMaker = findGate("fromDecisionMaker");

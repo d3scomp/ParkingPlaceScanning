@@ -12,6 +12,10 @@
  * Car application module
  */
 class ParkingPlaceScanningApp : public cSimpleModule {
+public:
+	ParkingPlaceScanningApp();
+	~ParkingPlaceScanningApp();
+
 protected:
 	int toDecisionMaker;
 	int fromDecisionMaker;
