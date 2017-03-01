@@ -1,8 +1,27 @@
 <config>
-    <interface hosts="*" address="10.x.x.x" netmask="255.x.x.x"/>
+<!-- Same network for eNodeBx and cars
+	<interface hosts="server1" names="eth0" address="192.168.0.1" netmask="255.255.255.0"/>
+	<interface hosts="server2" names="eth0" address="192.168.0.2" netmask="255.255.255.0"/>
+	<interface hosts="server3" names="eth0" address="192.168.0.3" netmask="255.255.255.0"/>
+	
+	 <interface hosts="*" address="10.x.x.x" netmask="255.x.x.x"/>
+	-->
+	
+	<interface hosts="server1" names="eth0" address="10.0.1.1" netmask="255.255.255.0"/>
+	<interface hosts="server2" names="eth0" address="10.0.1.2" netmask="255.255.255.0"/>
+	<interface hosts="server3" names="eth0" address="10.0.1.3" netmask="255.255.255.0"/>
+	
+	<interface hosts="server1" names="ppp0" address="10.1.1.1" netmask="255.255.255.0"/>
+	<interface hosts="eNodeB1" names="ppp" address="10.1.1.2" netmask="255.255.255.0"/>
+	
+	<interface hosts="server2" names="ppp0" address="10.1.2.1" netmask="255.255.255.0"/>
+	<interface hosts="eNodeB2" names="ppp" address="10.1.2.2" netmask="255.255.255.0"/>
+	
+	<interface hosts="server3" names="ppp0" address="10.1.3.1" netmask="255.255.255.0"/>
+	<interface hosts="eNodeB3" names="ppp" address="10.1.3.2" netmask="255.255.255.0"/>
+	
+	<interface hosts="*" address="10.2.x.x" netmask="255.255.255.0"/>
+	
+		
 <!-- <wireless hosts="eNodeB1 node[*]"/> -->
 </config>
-<!-- <config>
-    <interface hosts='*' address='10.x.x.x' netmask='255.255.255.0'/>
-    <route hosts="*">
-</config> -->

@@ -125,11 +125,11 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 		}
 	} else {
 		HeterogeneousMessage *testMessage = dynamic_cast<HeterogeneousMessage *>(msg);
-		std::cout << "Received message " << msg->getFullName() << " from " << testMessage->getSourceAddress() << std::endl;
+		std::cout << getId() <<  "received message " << msg->getFullName() << " from " << testMessage->getSourceAddress() << std::endl;
 		
 		ScanRequestMessage *requestMsg = dynamic_cast<ScanRequestMessage *>(msg);
 		if(requestMsg) {
-			std::cout << "received scan request until " << requestMsg->getUntil() << std::endl;
+			std::cout << "### "<< getId() << " received scan request until " << requestMsg->getUntil() << std::endl;
 			scanUntil = requestMsg->getUntil();
 		}
 		

@@ -177,15 +177,17 @@ void ParkingPlaceManagerApp::sendInitiateScan(std::string carId) {
 	ScanRequestMessage *requestMsg = new ScanRequestMessage("Scan request");
 	
 	double until = (simTime() + SimTime(SCAN_REQUEST_DURATION_MS, SIMTIME_MS)).dbl();
-	std::cout << "### " << getServerName() << "reuqesting scan on " << carId << " until " << until << std::endl;
+	std::cout << "### " << getServerName() << " requesting scan on " << carId << " until " << until << std::endl;
  	requestMsg->setUntil(until);
 	
 	requestMsg->setByteLength(32);
 	requestMsg->setNetworkType(LTE);
 	requestMsg->setDestinationAddress(carId.c_str());
 	requestMsg->setSourceAddress(getServerName());
+	//requestMsg->setSourceAddress("10.0.0.6");
 	
 	IPv4Address address = manager->getIPAddressForID(carId.c_str());
+	std::cout << "################# " << address.str() << " ###############################" << std::endl;
 	socket.sendTo(requestMsg, address, 4242);
 }
 
