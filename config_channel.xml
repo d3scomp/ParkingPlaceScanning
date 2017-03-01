@@ -50,8 +50,8 @@
             <parameter name="inCell-interference" type="bool" value="true"/>
 			<!-- if true, enables the multi-cell interference computation -->
 			<parameter name="multiCell-interference" type="bool" value="true"/>
-        </ChannelModel>        
-             
+        </ChannelModel>
+
         <!-- Feedback Type (REAL, DUMMY) -->
         <FeedbackComputation type="REAL">
         	 <!-- Target bler used to compute feedback -->
