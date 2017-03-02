@@ -13,6 +13,8 @@
  */
 class ParkingPlaceScanningApp : public cSimpleModule {
 public:
+	static double constexpr PARKING_PROBABILITY = 0.2;
+	
 	ParkingPlaceScanningApp();
 	~ParkingPlaceScanningApp();
 

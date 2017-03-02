@@ -34,7 +34,7 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		SERVER = "server" + getParentModule()->par("masterId").str();
 		
 		// Choose car mode
-		if (dblrand() < 0.2) {
+		if (dblrand() < PARKING_PROBABILITY) {
 			mode = PARKING;
 		} else {
 			mode = NORMAL;
