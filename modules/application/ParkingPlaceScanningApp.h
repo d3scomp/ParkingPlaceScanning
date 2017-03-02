@@ -51,9 +51,9 @@ private:
 	
 
 	
-	cMessage reportStatusMsg;
-	cMessage callForScanMsg;
-	cMessage scanTriggerMsg;
+	cMessage *reportStatusMsg;
+	cMessage *callForScanMsg;
+	cMessage *scanTriggerMsg;
 	
 	void reportStatus();
 	void callForScan();

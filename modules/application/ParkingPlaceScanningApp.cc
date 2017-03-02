@@ -12,6 +12,9 @@ Define_Module(ParkingPlaceScanningApp);
 
 ParkingPlaceScanningApp::ParkingPlaceScanningApp() {
 	std::cout << "ParkingPlaceScanningApp: constructor" << std::endl;
+	reportStatusMsg = new cMessage();
+	callForScanMsg = new cMessage();
+	scanTriggerMsg = new cMessage();
 }
 
 ParkingPlaceScanningApp::~ParkingPlaceScanningApp() {
@@ -38,10 +41,10 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		}
 		
 		// Schedule status reporting
-		scheduleAt(simTime() + uniform(0, 1), &reportStatusMsg);
+		scheduleAt(simTime() + uniform(0, 1), reportStatusMsg);
 		
 		// Schedule scan, it is actually perfoemed only when scan until is in the future
-		scheduleAt(simTime() + uniform(0, 1), &scanTriggerMsg);
+		scheduleAt(simTime() + uniform(0, 1), scanTriggerMsg);
 		
 		std::cout << getId() << ": INITIALIZED" << std::endl;
 	}
@@ -120,15 +123,15 @@ void ParkingPlaceScanningApp::scan() {
 
 void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 	if (msg->isSelfMessage()) {
-		if(msg == &reportStatusMsg) {
+		if(msg == reportStatusMsg) {
 			reportStatus();
-			scheduleAt(simTime() + STATUS_DELAY_S, &reportStatusMsg);
-		} else if (msg == &callForScanMsg) {
+			scheduleAt(simTime() + STATUS_DELAY_S, reportStatusMsg);
+		} else if (msg == callForScanMsg) {
 			callForScan();
-			scheduleAt(simTime() + CALL_DELAY_S, &callForScanMsg);
-		} else if (msg == &scanTriggerMsg) {
+			scheduleAt(simTime() + CALL_DELAY_S, callForScanMsg);
+		} else if (msg == scanTriggerMsg) {
 			scan();
-			scheduleAt(SimTime(simTime()) + SimTime(SCAN_DELAY_MS / SCAN_SPLIT, SIMTIME_MS), &scanTriggerMsg);// TODO: terminate trigger
+			scheduleAt(SimTime(simTime()) + SimTime(SCAN_DELAY_MS / SCAN_SPLIT, SIMTIME_MS), scanTriggerMsg);// TODO: terminate trigger
 		} else {
 			std::cerr << "Unknown self message received by " << getId() << std::endl;
 		}
