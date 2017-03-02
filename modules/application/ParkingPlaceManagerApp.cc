@@ -40,6 +40,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 				socket.sendTo(resultMsg, address, 4242);
 			} else {
 				std::cout << "SERVER RECEIVED UNHLANDLED SELF MESSAGE" << std::endl;
+				delete msg;
 			}
 		}
 		return;

@@ -134,6 +134,7 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 			scheduleAt(SimTime(simTime()) + SimTime(SCAN_DELAY_MS / SCAN_SPLIT, SIMTIME_MS), scanTriggerMsg);// TODO: terminate trigger
 		} else {
 			std::cerr << "Unknown self message received by " << getId() << std::endl;
+			delete msg;
 		}
 	} else {
 		HeterogeneousMessage *testMessage = dynamic_cast<HeterogeneousMessage *>(msg);
@@ -165,5 +166,7 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 			
 			std::cout << "Cur Pos: " << curPos << " dataPos" << dataPos << std::endl;
 		}
+		
+		delete msg;
 	}
 }
