@@ -37,7 +37,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 			if(resultMsg) {
 				std:: cout << "### " << getServerName() << " Processing time passed, redirecting result message to " << resultMsg->getDestinationAddress() << std::endl;
 				IPv4Address address = manager->getIPAddressForID(resultMsg->getDestinationAddress());
-				socket.sendTo(resultMsg, address, 4242);
+				if(!address.isUnspecified()) {
+					socket.sendTo(resultMsg, address, 4242);
+				}
 			} else {
 				std::cout << "SERVER RECEIVED UNHLANDLED SELF MESSAGE" << std::endl;
 				delete msg;
@@ -189,7 +191,9 @@ void ParkingPlaceManagerApp::sendInitiateScan(std::string carId) {
 	
 	IPv4Address address = manager->getIPAddressForID(carId.c_str());
 	std::cout << "################# " << address.str() << " ###############################" << std::endl;
-	socket.sendTo(requestMsg, address, 4242);
+	if(!address.isUnspecified()) {
+		socket.sendTo(requestMsg, address, 4242);
+	}
 }
 
 const char* ParkingPlaceManagerApp::getServerName() {
