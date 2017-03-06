@@ -71,6 +71,7 @@ void ParkingPlaceScanningApp::reportStatus() {
 	statusMsg->setHeading(heading);
 	statusMsg->setPosition(position);
 	statusMsg->setSpeed(speed);
+	statusMsg->setServer(SERVER.c_str());
 	
 	statusMsg->setByteLength(STATUS_SIZE);
 	

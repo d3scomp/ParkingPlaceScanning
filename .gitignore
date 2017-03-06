@@ -11,5 +11,6 @@ results
 .tkenvrc
 .nedfolders
 .tkenvlog
-modules/messages/*_m.h
 screenshots
+modules/messages/*_m.h
+modules/messages/*_m.cc

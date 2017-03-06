@@ -13,4 +13,5 @@ message CarStatusMessage extends HeterogeneousMessage {
 	double heading;
 	double speed;
 	string road;
+	string server;
 }
