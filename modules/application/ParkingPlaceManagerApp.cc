@@ -55,15 +55,6 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	if(heterogeneousMessage){
 		std::string sourceAddress = heterogeneousMessage->getSourceAddress();
 		std::cout << "### " << getServerName() << " received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << std::endl;
-
-		// Server replies with a simple message. Note that no additional parameters (like exact
-		// message size) are set and therefore transmission will more likely succeed. If you use
-		// this function set it correctly to get realistic results.
-/*-		HeterogeneousMessage *reply = new HeterogeneousMessage("Server Reply");
-		IPv4Address address = manager->getIPAddressForID(sourceAddress);
-		reply->setSourceAddress(getServerName());
-		std::cout << "Sending Message back to " << address << std::endl;
-		socket.sendTo(reply, address, 4242);*/
 	}
 	
 	// Handle status message

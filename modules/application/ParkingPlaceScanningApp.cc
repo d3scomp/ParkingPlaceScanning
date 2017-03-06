@@ -13,7 +13,6 @@ Define_Module(ParkingPlaceScanningApp);
 ParkingPlaceScanningApp::ParkingPlaceScanningApp() {
 	std::cout << "ParkingPlaceScanningApp: constructor" << std::endl;
 	reportStatusMsg = new cMessage();
-	callForScanMsg = new cMessage();
 	scanTriggerMsg = new cMessage();
 }
 
@@ -82,26 +81,6 @@ void ParkingPlaceScanningApp::reportStatus() {
 	send(statusMsg, toDecisionMaker);
 }
 
-void ParkingPlaceScanningApp::callForScan() {
-	// Call for parking assistance
-	std::cout << getId() << ": Calling for assistance" << std::endl;
-	HeterogeneousMessage *callMessage = new HeterogeneousMessage();
-	callMessage->setNetworkType(DSRC);
-	callMessage->setName("DSCR call for assistance message");
-	callMessage->setByteLength(10);		
-	callMessage->setDestinationAddress("0"); // BROADCAST
-	callMessage->setSourceAddress(getId().c_str());
-	send(callMessage, toDecisionMaker);
-	
-	HeterogeneousMessage* serverMessage = new HeterogeneousMessage();
-	serverMessage->setName("LTE call for assistance message");
-	serverMessage->setByteLength(10);
-	serverMessage->setNetworkType(LTE);
-	serverMessage->setDestinationAddress(SERVER.c_str());
-	serverMessage->setSourceAddress(getId().c_str());
-	send(serverMessage, toDecisionMaker);
-}
-
 void ParkingPlaceScanningApp::scan() {
 	if(simTime() > scanUntil) {
 		return;
@@ -127,9 +106,6 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 		if(msg == reportStatusMsg) {
 			reportStatus();
 			scheduleAt(simTime() + STATUS_DELAY_S, reportStatusMsg);
-		} else if (msg == callForScanMsg) {
-			callForScan();
-			scheduleAt(simTime() + CALL_DELAY_S, callForScanMsg);
 		} else if (msg == scanTriggerMsg) {
 			scan();
 			scheduleAt(SimTime(simTime()) + SimTime(SCAN_DELAY_MS / SCAN_SPLIT, SIMTIME_MS), scanTriggerMsg);// TODO: terminate trigger
