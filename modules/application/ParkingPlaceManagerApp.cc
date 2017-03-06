@@ -9,6 +9,8 @@
 
 Define_Module(ParkingPlaceManagerApp);
 
+const std::vector<std::string> ParkingPlaceManagerApp::SERVERS = std::vector<std::string>({"server1", "server2", "server3"});
+
 ParkingPlaceManagerApp::ParkingPlaceManagerApp() {}
 
 ParkingPlaceManagerApp::~ParkingPlaceManagerApp() {}

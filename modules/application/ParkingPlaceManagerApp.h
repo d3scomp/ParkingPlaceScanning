@@ -37,11 +37,14 @@ protected:
 	};
 
 public:
-	const uint64_t ENSEMBLE_PERIOD_MS = 1000; // How often to pair parking cars and scanning cars
-	const uint64_t SCAN_REQUEST_DURATION_MS = 3000; // How log should the the scanning car send scan data until asked again
-	const uint64_t SCAN_LOOKAHEAD_MS = 5000; // How long does it take the car to park, ideally scan from position that will be reached in this time
-	const uint64_t RECORD_VALIDITY_MS = 5000; // How long to remember cars
-	const uint64_t SCAN_PROCESSING_TIME_MS = 50;
+	static const uint64_t ENSEMBLE_PERIOD_MS = 1000; // How often to pair parking cars and scanning cars
+	static const uint64_t SCAN_REQUEST_DURATION_MS = 3000; // How log should the the scanning car send scan data until asked again
+	static const uint64_t SCAN_LOOKAHEAD_MS = 5000; // How long does it take the car to park, ideally scan from position that will be reached in this time
+	static const uint64_t RECORD_VALIDITY_MS = 5000; // How long to remember cars
+	static const uint64_t SCAN_PROCESSING_TIME_MS = 50;
+	
+	static const std::vector<std::string> SERVERS;
+
 	
 	ParkingPlaceManagerApp();
 	virtual ~ParkingPlaceManagerApp();
