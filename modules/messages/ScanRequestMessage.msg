@@ -7,5 +7,6 @@ class HeterogeneousMessage;
 message ScanRequestMessage extends HeterogeneousMessage {
 	double until;
 	string car;
-	string server;
+	string carServer;
+	string requestingServer;
 } 

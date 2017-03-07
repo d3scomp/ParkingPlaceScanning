@@ -36,6 +36,11 @@ protected:
 			return stream.str();
 		}
 	};
+	
+	struct ScanServerForward {
+		std::string server;
+		double until;
+	};
 
 public:
 	static const uint64_t ENSEMBLE_PERIOD_MS = 1000; // How often to pair parking cars and scanning cars
@@ -67,6 +72,7 @@ public:
 private:
 	std::map<std::string, CarRecord> records;
 	std::map<std::string, std::string> scanToRequester; // scanner car -> scan requesting car
+	std::map<std::string, std::list<ScanServerForward> > scanToServer; // scanner car -> server managing requesting car
 	
 	void dumpRecords();
 	

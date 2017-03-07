@@ -87,10 +87,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	if(scan) {
 		std::cout << "Received scan data from position " << scan->getDataPosition() << " at " << scan->getDataTimestamp() << std::endl;
 		
+		// Schedule delivery of result to requesting car (if any)
 		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
-		if(requester == scanToRequester.end()) {
-			std:: cout << "### " << getServerName() << " received data for nonexistent scan request -> dropping" << std::endl;
-		} else {
+		if(requester != scanToRequester.end()) {
 			// Create result message and deliver it with delay to self, it will be resend later to recipient
 			ScanResultMessage *resultMsg = new ScanResultMessage("Scan result");
 			
@@ -105,6 +104,19 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 			// Send message to self, will be redirected afther processing time to requester
 			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), resultMsg);
 		}
+		
+		// Forward scan data to requesting server (if any)
+		std::map<std::string, std::list<ScanServerForward> >::iterator requestingServer = scanToServer.find(scan->getSourceAddress());
+		if(requestingServer != scanToServer.end()) {
+			for(ScanServerForward &record: requestingServer->second) {
+				if(record.until > simTime().dbl()) {
+					auto address = IPvXAddressResolver().resolve(record.server.c_str());
+					std::cout << "DEBUG: " << record.server << " addr:" << address <<std::endl;
+					socket.sendTo(scan->dup(), address, PORT);
+				}
+			}
+		}
+		
 		delete msg;
 		return;
 	}
@@ -118,6 +130,10 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		if(!address.isUnspecified()) {
 			socket.sendTo(request->dup(), address, PORT);
 		}
+		
+		// Remember mapping in order to forward results later
+		scanToServer[request->getCar()].push_back({request->getRequestingServer(), request->getUntil()});
+		
 		delete msg;
 		return;
 	}
@@ -170,7 +186,7 @@ void ParkingPlaceManagerApp::ensemble() {
 		const CarRecord &car = record.second;
 		
 		// Determine scanner for parking cars managed by this server
-		if(car.mode == PARKING && car.server != getServerName()) {
+		if(car.mode == PARKING && car.server == getServerName()) {
 			std::cout << car.name << " requests parking assistance" << std::endl;			
 			//std::cout << "current position: " << car.position << " heading: " << car.heading << " speed: " << car.speed << std::endl;
 			std::cout << car.toString() << std::endl;
@@ -192,7 +208,7 @@ void ParkingPlaceManagerApp::ensemble() {
 				}
 			}
 			std::cout << "determined scanner: " << closest.toString() << std::endl;
-			scanToRequester[car.name] = closest.name;
+			scanToRequester[closest.name] = car.name;
 			sendInitiateScan(closest);
 		}
 	}
@@ -205,7 +221,8 @@ void ParkingPlaceManagerApp::sendInitiateScan(const CarRecord &where) {
 	std::cout << "### " << getServerName() << " requesting scan on " << where.name << " until " << until << std::endl;
  	requestMsg->setUntil(until);
 	requestMsg->setCar(where.name.c_str());
-	requestMsg->setServer(where.server.c_str());
+	requestMsg->setCarServer(where.server.c_str());
+	requestMsg->setRequestingServer(getServerName());
 	requestMsg->setByteLength(32);
 	requestMsg->setSourceAddress(getServerName());
 	requestMsg->setNetworkType(LTE);
