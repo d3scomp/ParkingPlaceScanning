@@ -169,8 +169,8 @@ void ParkingPlaceManagerApp::ensemble() {
 	for(auto record: records) {
 		const CarRecord &car = record.second;
 		
-		// Determine scanner for parking car
-		if(car.mode == PARKING) {
+		// Determine scanner for parking cars managed by this server
+		if(car.mode == PARKING && car.server != getServerName()) {
 			std::cout << car.name << " requests parking assistance" << std::endl;			
 			//std::cout << "current position: " << car.position << " heading: " << car.heading << " speed: " << car.speed << std::endl;
 			std::cout << car.toString() << std::endl;
