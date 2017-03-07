@@ -40,7 +40,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 				std:: cout << "### " << getServerName() << " Processing time passed, redirecting result message to " << resultMsg->getDestinationAddress() << std::endl;
 				IPv4Address address = manager->getIPAddressForID(resultMsg->getDestinationAddress());
 				if(!address.isUnspecified()) {
-					socket.sendTo(resultMsg, address, 4242);
+					socket.sendTo(resultMsg, address, PORT);
 				}
 			} else {
 				std::cout << "SERVER RECEIVED UNHLANDLED SELF MESSAGE" << std::endl;
@@ -62,8 +62,21 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	if(status) {
 		std::cout << "### " << getServerName() << " received status message from: " << status->getId() << " mode: " << static_cast<CarMode>(status->getMode()) << " pos: " << status->getPosition() << " head: " << status->getHeading() << " road: " << status->getRoad() << std::endl;
 		
-		CarRecord record = {simTime(), status->getId(), static_cast<CarMode>(status->getMode()), status->getPosition(), status->getRoad(), status->getHeading(), status->getSpeed()};
+		// Reate record for the car
+		CarRecord record = {simTime(), status->getId(), static_cast<CarMode>(status->getMode()), status->getPosition(), status->getRoad(), status->getHeading(), status->getSpeed(), status->getServer()};
 		records[record.name] = record;
+		
+		// Forward status to other servers
+		if(strcmp(status->getServer(), getServerName()) == 0) {
+			for(const std::string &server: SERVERS) {
+				if(server != getServerName()) {
+					std::cout << "#### Forwarding to " << server << std::endl;
+					auto address = IPvXAddressResolver().resolve(server.c_str());
+					std::cout << "Address: " << address << std::endl;
+					socket.sendTo(status->dup(), address, PORT);
+				}
+			}
+		}
 	}
 	
 	// Handle scan data
@@ -164,25 +177,30 @@ void ParkingPlaceManagerApp::ensemble() {
 			}
 			std::cout << "determined scanner: " << closest.toString() << std::endl;
 			scanToRequester[car.name] = closest.name;
-			sendInitiateScan(closest.name);
+			sendInitiateScan(closest);
 		}
 	}
 }
 
-void ParkingPlaceManagerApp::sendInitiateScan(std::string carId) {
+void ParkingPlaceManagerApp::sendInitiateScan(const CarRecord &where) {
+	// Disable reuqests on remote cars, for now
+	if(where.server != getServerName()) {
+		return;
+	}
+	
 	ScanRequestMessage *requestMsg = new ScanRequestMessage("Scan request");
 	
 	double until = (simTime() + SimTime(SCAN_REQUEST_DURATION_MS, SIMTIME_MS)).dbl();
-	std::cout << "### " << getServerName() << " requesting scan on " << carId << " until " << until << std::endl;
+	std::cout << "### " << getServerName() << " requesting scan on " << where.name << " until " << until << std::endl;
  	requestMsg->setUntil(until);
 	
 	requestMsg->setByteLength(32);
 	requestMsg->setNetworkType(LTE);
-	requestMsg->setDestinationAddress(carId.c_str());
+	requestMsg->setDestinationAddress(where.name.c_str());
 	requestMsg->setSourceAddress(getServerName());
 	//requestMsg->setSourceAddress("10.0.0.6");
 	
-	IPv4Address address = manager->getIPAddressForID(carId.c_str());
+	IPv4Address address = manager->getIPAddressForID(where.name.c_str());
 	std::cout << "################# " << address.str() << " ###############################" << std::endl;
 	if(!address.isUnspecified()) {
 		socket.sendTo(requestMsg, address, 4242);

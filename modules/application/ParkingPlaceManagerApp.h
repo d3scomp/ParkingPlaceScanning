@@ -26,6 +26,7 @@ protected:
 		std::string road;
 		double heading;
 		double speed;
+		std::string server; // Server the car is connetced to
 		
 		std::string toString() const {
 			std::stringstream stream;
@@ -44,6 +45,8 @@ public:
 	static const uint64_t SCAN_PROCESSING_TIME_MS = 50;
 	
 	static const std::vector<std::string> SERVERS;
+	
+	static const uint32_t PORT = 4242;
 
 	
 	ParkingPlaceManagerApp();
@@ -69,7 +72,7 @@ private:
 	
 	void ensemble();
 	
-	void sendInitiateScan(std::string carId);
+	void sendInitiateScan(const CarRecord &where);
 	
 	const char* getServerName();
 	
