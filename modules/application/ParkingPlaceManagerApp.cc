@@ -183,27 +183,31 @@ void ParkingPlaceManagerApp::ensemble() {
 }
 
 void ParkingPlaceManagerApp::sendInitiateScan(const CarRecord &where) {
-	// Disable reuqests on remote cars, for now
-	if(where.server != getServerName()) {
-		return;
-	}
-	
 	ScanRequestMessage *requestMsg = new ScanRequestMessage("Scan request");
 	
 	double until = (simTime() + SimTime(SCAN_REQUEST_DURATION_MS, SIMTIME_MS)).dbl();
 	std::cout << "### " << getServerName() << " requesting scan on " << where.name << " until " << until << std::endl;
  	requestMsg->setUntil(until);
-	
+	requestMsg->setCar(where.name.c_str());
+	requestMsg->setServer(where.server.c_str());
 	requestMsg->setByteLength(32);
-	requestMsg->setNetworkType(LTE);
-	requestMsg->setDestinationAddress(where.name.c_str());
 	requestMsg->setSourceAddress(getServerName());
-	//requestMsg->setSourceAddress("10.0.0.6");
-	
-	IPv4Address address = manager->getIPAddressForID(where.name.c_str());
-	std::cout << "################# " << address.str() << " ###############################" << std::endl;
-	if(!address.isUnspecified()) {
-		socket.sendTo(requestMsg, address, 4242);
+	requestMsg->setNetworkType(LTE);
+		
+	if(where.server == getServerName()) {
+		// Send message directly to car
+		requestMsg->setDestinationAddress(where.name.c_str());
+		auto address = manager->getIPAddressForID(where.name.c_str());
+		if(!address.isUnspecified()) {
+			socket.sendTo(requestMsg, address, 4242);
+		}
+	} else {
+		// Send message to server with access to car
+		requestMsg->setDestinationAddress(where.server.c_str());
+		auto address = IPvXAddressResolver().resolve(where.server.c_str());
+		if(!address.isUnspecified()) {
+			socket.sendTo(requestMsg, address, 4242);
+		}
 	}
 }
 
