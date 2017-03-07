@@ -77,6 +77,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 				}
 			}
 		}
+		
+		delete msg;
+		return;
 	}
 	
 	// Handle scan data
@@ -102,9 +105,22 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 			// Send message to self, will be redirected afther processing time to requester
 			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), resultMsg);
 		}
+		delete msg;
+		return;
 	}
 	
-	delete msg;
+	// Handle initiate scan from other servers
+	ScanRequestMessage *request = dynamic_cast<ScanRequestMessage *>(msg);
+	if(request) {
+		std::cout << "Forwarding initiate scan request to car: " << request->getCar() << std::endl;
+		request->setDestinationAddress(request->getCar());
+		auto address = manager->getIPAddressForID(request->getCar());
+		if(!address.isUnspecified()) {
+			socket.sendTo(request->dup(), address, PORT);
+		}
+		delete msg;
+		return;
+	}
 }
 
 void ParkingPlaceManagerApp::dumpRecords() {
@@ -199,14 +215,14 @@ void ParkingPlaceManagerApp::sendInitiateScan(const CarRecord &where) {
 		requestMsg->setDestinationAddress(where.name.c_str());
 		auto address = manager->getIPAddressForID(where.name.c_str());
 		if(!address.isUnspecified()) {
-			socket.sendTo(requestMsg, address, 4242);
+			socket.sendTo(requestMsg, address, PORT);
 		}
 	} else {
 		// Send message to server with access to car
 		requestMsg->setDestinationAddress(where.server.c_str());
 		auto address = IPvXAddressResolver().resolve(where.server.c_str());
 		if(!address.isUnspecified()) {
-			socket.sendTo(requestMsg, address, 4242);
+			socket.sendTo(requestMsg, address, PORT);
 		}
 	}
 }
