@@ -54,7 +54,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	HeterogeneousMessage* heterogeneousMessage = dynamic_cast<HeterogeneousMessage*>(msg);
 	if(heterogeneousMessage){
 		std::string sourceAddress = heterogeneousMessage->getSourceAddress();
-		std::cout << "### " << getServerName() << " received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << std::endl;
+		std::cout << "### " << getServerName() << " received LTE Message: " << msg->getFullName() << " from: " << sourceAddress << " transmission: " << heterogeneousMessage->getArrivalTime() - heterogeneousMessage->getCreationTime() << std::endl;
 	}
 	
 	// Handle status message
