@@ -49,6 +49,7 @@ private:
 	const uint64_t SCAN_SPLIT = 10; 
 	
 	double scanUntil = 0;
+	bool canSendScan = false;
 	
 	
 

@@ -4,6 +4,7 @@
 #include "../messages/CarStatusMessage_m.h"
 #include "../messages/ScanRequestMessage_m.h"
 #include "../messages/ScanDataMessage_m.h"
+#include "../messages/ScanDataACKMessage_m.h"
 #include "../messages/ScanResultMessage_m.h"
 #include "ParkingPlaceCommon.h"
 
@@ -27,7 +28,6 @@ void ParkingPlaceManagerApp::initialize(int stage){
 
 void ParkingPlaceManagerApp::finish(){
 }
-
 
 void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	if(msg->isSelfMessage()) {
@@ -87,6 +87,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	if(scan) {
 		std::cout << "Received scan data from position " << scan->getDataPosition() << " at " << scan->getDataTimestamp() << std::endl;
 		
+		// ACK scan data
+		sendScanDataACK(scan->getSourceAddress());
+		
 		// Schedule delivery of result to requesting car (if any)
 		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
 		if(requester != scanToRequester.end()) {
@@ -137,6 +140,16 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		delete msg;
 		return;
 	}
+}
+
+void ParkingPlaceManagerApp::sendScanDataACK(std::string to) {
+	ScanDataACKMessage *ackMsg = new ScanDataACKMessage("Scan ACK");
+	ackMsg->setByteLength(1);
+	ackMsg->setDestinationAddress(to.c_str());
+	ackMsg->setSourceAddress(getServerName());
+	
+	auto address = manager->getIPAddressForID(to.c_str());
+	socket.sendTo(ackMsg,address, PORT);
 }
 
 void ParkingPlaceManagerApp::dumpRecords() {

@@ -5,6 +5,7 @@
 #include "ParkingPlaceScanningApp.h"
 #include "../messages/CarStatusMessage_m.h"
 #include "../messages/ScanDataMessage_m.h"
+#include "../messages/ScanDataACKMessage_m.h"
 #include "../messages/ScanRequestMessage_m.h"
 #include "../messages/ScanResultMessage_m.h"
 
@@ -107,7 +108,10 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 			reportStatus();
 			scheduleAt(simTime() + STATUS_DELAY_S, reportStatusMsg);
 		} else if (msg == scanTriggerMsg) {
-			scan();
+			if(canSendScan) {
+				scan();
+				canSendScan = false;
+			}
 			scheduleAt(SimTime(simTime()) + SimTime(SCAN_DELAY_MS / SCAN_SPLIT, SIMTIME_MS), scanTriggerMsg);// TODO: terminate trigger
 		} else {
 			std::cerr << "Unknown self message received by " << getId() << std::endl;
@@ -121,6 +125,7 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 		if(requestMsg) {
 			std::cout << "### "<< getId() << " received scan request until " << requestMsg->getUntil() << std::endl;
 			scanUntil = requestMsg->getUntil();
+			canSendScan = true;
 		}
 		
 		ScanResultMessage *resultMsg = dynamic_cast<ScanResultMessage *>(msg);
@@ -142,6 +147,12 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 			std:: cout << "### "<< getId() << " received scan result message lattency: " << lattency << " distance (+ = ahead) " << distance << std::endl;
 			
 			std::cout << "Cur Pos: " << curPos << " dataPos" << dataPos << std::endl;
+		}
+		
+		ScanDataACKMessage *scanACKMsg = dynamic_cast<ScanDataACKMessage *>(msg);
+		if(scanACKMsg) {
+			std:: cout << "### "<< getId() << " received scan ACK" << std::endl;
+			canSendScan = true;
 		}
 		
 		delete msg;

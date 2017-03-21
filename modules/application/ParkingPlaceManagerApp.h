@@ -79,6 +79,7 @@ private:
 	void ensemble();
 	
 	void sendInitiateScan(const CarRecord &where);
+	void sendScanDataACK(std::string to);
 	
 	const char* getServerName();
 	
