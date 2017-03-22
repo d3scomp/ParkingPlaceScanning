@@ -144,7 +144,7 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 				distance *= -1;
 			}
 			
-			std:: cout << "### "<< getId() << " received scan result message lattency: " << lattency << " distance (+ = ahead) " << distance << std::endl;
+			std:: cout << "### EtE lattency ###"<< getId() << " received scan result message (lattency, distance+ahead): " << lattency << " " << distance << std::endl;
 			
 			std::cout << "Cur Pos: " << curPos << " dataPos" << dataPos << std::endl;
 		}
