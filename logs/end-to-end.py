@@ -3,14 +3,18 @@ import numpy as np
 
 data = []
 
-with open("end-to-end lattency.txt") as f:
+with open("end-to-end-latency.txt") as f:
 	lines = f.readlines()
 
 	for line in lines:
 		data.append(float(line) * 1000)
 
-#plt.boxplot(data, notch=True, bootstrap=10000)
-plt.plot(data, 'bo')
+
+ax1 = plt.subplot(121)
+ax1.boxplot(data, notch=True)
 plt.ylabel("ms")
 
-plt.show()
+ax2 = plt.subplot(122)
+ax2.plot(data, 'wo')
+
+plt.savefig("EtE.pdf")

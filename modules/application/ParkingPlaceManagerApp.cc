@@ -23,10 +23,53 @@ void ParkingPlaceManagerApp::initialize(int stage){
 		ASSERT(manager);
 		
 		scheduleAt(simTime() + uniform(0, 1), &ensembleMsg);
+		scheduleAt(simTime() + uniform(0, 1), &processingMsg);
 	}
 }
 
 void ParkingPlaceManagerApp::finish(){
+}
+
+void ParkingPlaceManagerApp::process() {
+	std::cout << "###processing queue size### : " << getServerName() << " " << toProcess.size() << std::endl;
+	
+	for(size_t i = 0; i < SCAN_PROCESSING_PARALLEL && !toProcess.empty(); i++) {
+		ScanDataMessage *scan = toProcess.front();
+		toProcess.pop();
+		
+		// Schedule delivery of result to requesting car (if any)
+		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
+		if(requester != scanToRequester.end()) {
+			// Create result message and deliver it with delay to self, it will be resend later to recipient
+			ScanResultMessage *resultMsg = new ScanResultMessage("Scan result");
+			
+			resultMsg->setDataTimestamp(scan->getDataTimestamp());
+			resultMsg->setDataPosition(scan->getDataPosition());
+			
+			resultMsg->setByteLength(64);
+			resultMsg->setNetworkType(LTE);
+			resultMsg->setDestinationAddress(requester->second.c_str());
+			resultMsg->setSourceAddress(getServerName());
+			
+			IPv4Address address = manager->getIPAddressForID(resultMsg->getDestinationAddress());
+			if(!address.isUnspecified()) {
+				socket.sendTo(resultMsg, address, PORT);
+			}
+		}
+		
+		// Forward scan data to requesting server (if any)
+		std::map<std::string, std::list<ScanServerForward> >::iterator requestingServer = scanToServer.find(scan->getSourceAddress());
+		if(requestingServer != scanToServer.end()) {
+			for(ScanServerForward &record: requestingServer->second) {
+				if(record.until > simTime().dbl()) {
+					auto address = IPvXAddressResolver().resolve(record.server.c_str());
+					socket.sendTo(scan->dup(), address, PORT);
+				}
+			}
+		}
+		
+		delete scan;
+	}
 }
 
 void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
@@ -34,6 +77,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		if(msg == &ensembleMsg) {
 			ensemble();
 			scheduleAt(SimTime(simTime()) + SimTime(ENSEMBLE_PERIOD_MS, SIMTIME_MS), &ensembleMsg);
+		} else if(msg == &processingMsg) {
+			process();
+			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), &processingMsg);
 		} else {
 			ScanResultMessage *resultMsg = dynamic_cast<ScanResultMessage *>(msg);
 			if(resultMsg) {
@@ -90,37 +136,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		// ACK scan data
 		sendScanDataACK(scan->getSourceAddress());
 		
-		// Schedule delivery of result to requesting car (if any)
-		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
-		if(requester != scanToRequester.end()) {
-			// Create result message and deliver it with delay to self, it will be resend later to recipient
-			ScanResultMessage *resultMsg = new ScanResultMessage("Scan result");
-			
-			resultMsg->setDataTimestamp(scan->getDataTimestamp());
-			resultMsg->setDataPosition(scan->getDataPosition());
-			
-			resultMsg->setByteLength(64);
-			resultMsg->setNetworkType(LTE);
-			resultMsg->setDestinationAddress(requester->second.c_str());
-			resultMsg->setSourceAddress(getServerName());
-			
-			// Send message to self, will be redirected afther processing time to requester
-			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), resultMsg);
-		}
+		// Schedule message to process
+		toProcess.push(scan);
 		
-		// Forward scan data to requesting server (if any)
-		std::map<std::string, std::list<ScanServerForward> >::iterator requestingServer = scanToServer.find(scan->getSourceAddress());
-		if(requestingServer != scanToServer.end()) {
-			for(ScanServerForward &record: requestingServer->second) {
-				if(record.until > simTime().dbl()) {
-					auto address = IPvXAddressResolver().resolve(record.server.c_str());
-					std::cout << "DEBUG: " << record.server << " addr:" << address <<std::endl;
-					socket.sendTo(scan->dup(), address, PORT);
-				}
-			}
-		}
-		
-		delete msg;
 		return;
 	}
 	
