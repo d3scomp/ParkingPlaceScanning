@@ -50,7 +50,7 @@ public:
 	static const uint64_t SCAN_LOOKAHEAD_MS = 5000; // How long does it take the car to park, ideally scan from position that will be reached in this time
 	static const uint64_t RECORD_VALIDITY_MS = 5000; // How long to remember cars
 	static const uint64_t SCAN_PROCESSING_TIME_MS = 50;
-	static const uint64_t SCAN_PROCESSING_PARALLEL = 10;
+	static const uint64_t SCAN_PROCESSING_PARALLEL = 1;
 	
 	static const std::vector<std::string> SERVERS;
 	

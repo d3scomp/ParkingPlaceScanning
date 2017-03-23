@@ -57,17 +57,6 @@ void ParkingPlaceManagerApp::process() {
 			}
 		}
 		
-		// Forward scan data to requesting server (if any)
-		std::map<std::string, std::list<ScanServerForward> >::iterator requestingServer = scanToServer.find(scan->getSourceAddress());
-		if(requestingServer != scanToServer.end()) {
-			for(ScanServerForward &record: requestingServer->second) {
-				if(record.until > simTime().dbl()) {
-					auto address = IPvXAddressResolver().resolve(record.server.c_str());
-					socket.sendTo(scan->dup(), address, PORT);
-				}
-			}
-		}
-		
 		delete scan;
 	}
 }
@@ -136,8 +125,21 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		// ACK scan data
 		sendScanDataACK(scan->getSourceAddress());
 		
+		// Forward scan data to requesting server (if any)
+		std::map<std::string, std::list<ScanServerForward> >::iterator requestingServer = scanToServer.find(scan->getSourceAddress());
+		if(requestingServer != scanToServer.end()) {
+			for(ScanServerForward &record: requestingServer->second) {
+				if(record.until > simTime().dbl()) {
+					auto address = IPvXAddressResolver().resolve(record.server.c_str());
+					socket.sendTo(scan->dup(), address, PORT);
+				}
+			}
+		}
+		
 		// Schedule message to process
-		toProcess.push(scan);
+		if(scan->getPart() == 0) {
+			toProcess.push(scan);
+		}
 		
 		return;
 	}

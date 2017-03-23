@@ -94,6 +94,8 @@ void ParkingPlaceScanningApp::scan() {
 	scanMsg->setByteLength(SCAN_SIZE / SCAN_SPLIT);
 	scanMsg->setDataPosition(mobility->getCurrentPosition());
 	scanMsg->setDataTimestamp(simTime().dbl());
+	scanMsg->setPart(scanCounter++);
+	scanCounter %= 10;
 	
 	scanMsg->setNetworkType(LTE);
 	scanMsg->setDestinationAddress(SERVER.c_str());
@@ -125,6 +127,7 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 		if(requestMsg) {
 			std::cout << "### "<< getId() << " received scan request until " << requestMsg->getUntil() << std::endl;
 			scanUntil = requestMsg->getUntil();
+			scanCounter = 0;
 			canSendScan = true;
 		}
 		

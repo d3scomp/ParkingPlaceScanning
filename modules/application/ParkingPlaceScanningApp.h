@@ -50,6 +50,7 @@ private:
 	
 	double scanUntil = 0;
 	bool canSendScan = false;
+	int scanCounter = 0;
 	
 	
 
