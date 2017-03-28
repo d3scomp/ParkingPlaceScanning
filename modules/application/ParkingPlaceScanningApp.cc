@@ -70,6 +70,8 @@ void ParkingPlaceScanningApp::reportStatus() {
 	
 	std:: cout << "### " << getId() << " reporting status: position: " << position << " heading: " << heading << " road: " << road << " speed:" << speed << std::endl;
 	
+	std:: cout << "# car scanning # "<< simTime() << " # " << getId() << " # "<< (bool)(scanUntil < simTime().dbl()) << std::endl;
+	
 	CarStatusMessage *statusMsg = new CarStatusMessage();
 	statusMsg->setName("Car status message");
 	
