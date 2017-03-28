@@ -31,7 +31,7 @@ void ParkingPlaceManagerApp::finish(){
 }
 
 void ParkingPlaceManagerApp::process() {
-	std::cout << "###processing queue size### : " << getServerName() << " " << toProcess.size() << std::endl;
+	std::cout << "# server processing queue # "<< simTime() << " # " << getServerName() << " # "<< toProcess.size() << std::endl;
 	
 	for(size_t i = 0; i < SCAN_PROCESSING_PARALLEL && !toProcess.empty(); i++) {
 		ScanDataMessage *scan = toProcess.front();
