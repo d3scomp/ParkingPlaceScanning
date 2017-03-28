@@ -29,6 +29,8 @@ protected:
 	virtual void handleMessage(cMessage *msg);
 	
 	std::string getId();
+	
+	static int numCars;
 
 private:
 	std::string SERVER;

@@ -11,14 +11,22 @@
 
 Define_Module(ParkingPlaceScanningApp);
 
+int ParkingPlaceScanningApp::numCars = 0;
+
 ParkingPlaceScanningApp::ParkingPlaceScanningApp() {
 	std::cout << "ParkingPlaceScanningApp: constructor" << std::endl;
 	reportStatusMsg = new cMessage();
 	scanTriggerMsg = new cMessage();
+	numCars++;
+	
+	std:: cout << "# num cars # "<< simTime() << " # global # "<< numCars << std::endl;
 }
 
 ParkingPlaceScanningApp::~ParkingPlaceScanningApp() {
 	std::cout << "ParkingPlaceScanningApp: destructor" << std::endl;
+	numCars--;
+	
+	std:: cout << "# num cars # "<< simTime() << " # global # "<< numCars << std::endl;
 }
 
 void ParkingPlaceScanningApp::initialize(int stage) {
@@ -147,7 +155,10 @@ void ParkingPlaceScanningApp::handleMessage(cMessage *msg) {
 				distance *= -1;
 			}
 			
-			std:: cout << "### EtE lattency ###"<< getId() << " received scan result message (lattency, distance+ahead): " << lattency << " " << distance << std::endl;
+			std:: cout << getId() << " received scan result message (lattency, distance+ahead): " << lattency << " " << distance << std::endl;
+			
+			std:: cout << "# EtE lattency # "<< simTime() << " # " << getId() << " # "<< lattency << std::endl;
+			std:: cout << "# EtE distance # "<< simTime() << " # " << getId() << " # "<< distance << std::endl;
 			
 			std::cout << "Cur Pos: " << curPos << " dataPos" << dataPos << std::endl;
 		}
