@@ -22,7 +22,7 @@ def plot_ete_latency():
 	ax1.set_title("End to end delay")
 
 	ax2 = fig.add_subplot(122)
-	ax2.plot(times, data, 'b.')
+	ax2.plot(times, data, '.', color="black", markersize=1.5, fillstyle=None)
 	ax2.set_xlabel("timestamp in seconds")
 	ax2.set_ylabel("latency in milliseconds")
 	ax2.set_title("End to end delay")
@@ -50,7 +50,7 @@ def plot_ete_distance():
 	ax1.set_title("Scan distance (+ ~ ahead)")
 
 	ax2 = fig.add_subplot(122)
-	ax2.plot(times, data, 'b.')
+	ax2.plot(times, data, '.', color="black", markersize=1.5, fillstyle=None)
 	ax2.set_xlabel("timestamp in seconds")
 	ax2.set_ylabel("distance in meters")
 	ax2.set_title("Scan distance (+ ~ ahead)")
