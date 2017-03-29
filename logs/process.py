@@ -14,18 +14,20 @@ def plot_ete_latency():
 			data.append(float(parts[2]) * 1000)
 			times.append(float(parts[0]))
 
-	ax1 = plt.subplot(121)
+	fig = plt.figure()
+
+	ax1 = fig.add_subplot(121)
 	ax1.boxplot(data, notch=True)
-	plt.ylabel("latency in ms")
-	plt.title("End to end delay")
+	ax1.set_ylabel("latency in ms")
+	ax1.set_title("End to end delay")
 
-	ax2 = plt.subplot(122)
+	ax2 = fig.add_subplot(122)
 	ax2.plot(times, data, 'wo')
-	plt.xlabel("timestamp in seconds")
-	plt.ylabel("latency in milliseconds")
-	plt.title("End to end delay")
+	ax2.set_xlabel("timestamp in seconds")
+	ax2.set_ylabel("latency in milliseconds")
+	ax2.set_title("End to end delay")
 
-	plt.savefig("EtE-latency.pdf")
+	fig.savefig("EtE-latency.pdf")
 
 
 def plot_ete_distance():
@@ -40,16 +42,18 @@ def plot_ete_distance():
 			data.append(float(parts[2]))
 			times.append(float(parts[0]))
 
-	ax1 = plt.subplot(121)
-	ax1.boxplot(data, notch=False)
-	plt.ylabel("distance in meters")
-	plt.title("Scan distance (+ ~ ahead)")
+	fig = plt.figure()
 
-	ax2 = plt.subplot(122)
+	ax1 = fig.add_subplot(121)
+	ax1.boxplot(data, notch=True)
+	ax1.set_ylabel("distance in meters")
+	ax1.set_title("Scan distance (+ ~ ahead)")
+
+	ax2 = fig.add_subplot(122)
 	ax2.plot(times, data, 'wo')
-	plt.xlabel("timestamp in seconds")
-	plt.ylabel("distance in meters")
-	plt.title("Scan distance (+ ~ ahead)")
+	ax2.set_xlabel("timestamp in seconds")
+	ax2.set_ylabel("distance in meters")
+	ax2.set_title("Scan distance (+ ~ ahead)")
 
 	plt.savefig("EtE-distance.pdf")
 
@@ -68,16 +72,18 @@ def plot_cars_scanning():
 				data[time] = 0
 			data[time] += 1
 
-		ax1 = plt.subplot(121)
-		ax1.boxplot(list(data.values()), notch=False)
-		plt.ylabel("#cars scanning")
-		plt.title("#cars scanning")
+		fig = plt.figure()
 
-		ax2 = plt.subplot(122)
+		ax1 = fig.add_subplot(121)
+		ax1.boxplot(list(data.values()), notch=True)
+		ax1.set_ylabel("#cars scanning")
+		ax1.set_title("#cars scanning")
+
+		ax2 = fig.add_subplot(122)
 		ax2.plot(list(data.keys()), list(data.values()))
-		plt.xlabel("timestamp in seconds")
-		plt.ylabel("#cars scanning")
-		plt.title("#cars scanning")
+		ax2.set_xlabel("timestamp in seconds")
+		ax2.set_ylabel("#cars scanning")
+		ax2.set_title("#cars scanning")
 
 		plt.savefig("carscanning.pdf")
 
@@ -97,16 +103,18 @@ def plot_num_cars():
 			data.append(value)
 			times.append(time)
 
-		ax1 = plt.subplot(121)
-		ax1.boxplot(data, notch=False)
-		plt.ylabel("# cars")
-		plt.title("# cars")
+		fig = plt.figure()
 
-		ax2 = plt.subplot(122)
+		ax1 = fig.add_subplot(121)
+		ax1.boxplot(data, notch=True)
+		ax1.set_ylabel("# cars")
+		ax1.set_title("# cars")
+
+		ax2 = fig.add_subplot(122)
 		ax2.plot(times, data)
-		plt.xlabel("timestamp in seconds")
-		plt.ylabel("# cars")
-		plt.title("# cars")
+		ax2.set_xlabel("timestamp in seconds")
+		ax2.set_ylabel("# cars")
+		ax2.set_title("# cars")
 
 		plt.savefig("cars.pdf")
 
@@ -131,18 +139,20 @@ def plot_server_queue():
 			data[server].append(value)
 			times[server].append(time)
 
-		ax1 = plt.subplot(121)
-		ax1.boxplot([data["server1"], data["server2"], data["server3"]], notch=False)
-		plt.xlabel("server")
-		plt.ylabel("# scans to process")
-		plt.title("server queue length")
+		fig = plt.figure()
 
-		ax2 = plt.subplot(122)
+		ax1 = fig.add_subplot(121)
+		ax1.boxplot([data["server1"], data["server2"], data["server3"]], notch=True)
+		ax1.set_xlabel("server")
+		ax1.set_ylabel("# scans to process")
+		ax1.set_title("server queue length")
+
+		ax2 = fig.add_subplot(122)
 		for server in data.keys():
 			ax2.plot(times[server], data[server], "wo")
-		plt.xlabel("timestamp in seconds")
-		plt.ylabel("# scans to process")
-		plt.title("server queue length")
+		ax2.set_xlabel("timestamp in seconds")
+		ax2.set_ylabel("# scans to process")
+		ax2.set_title("server queue length")
 
 		plt.savefig("serverqueue.pdf")
 
