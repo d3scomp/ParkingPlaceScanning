@@ -10,4 +10,5 @@ message ScanDataMessage extends HeterogeneousMessage {
 	Coord dataPosition;
 	double dataTimestamp;
 	int part;
+	bool forwarded;
 }

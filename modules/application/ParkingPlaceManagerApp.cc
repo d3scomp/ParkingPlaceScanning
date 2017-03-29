@@ -120,10 +120,12 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	// Handle scan data
 	ScanDataMessage *scan = dynamic_cast<ScanDataMessage *>(msg);
 	if(scan) {
-		std::cout << "Received scan data from position " << scan->getDataPosition() << " at " << scan->getDataTimestamp() << std::endl;
+		std::cout << getServerName() << " Received scan data from " << scan->getSourceAddress() << " position " << scan->getDataPosition() << " at " << scan->getDataTimestamp() << std::endl;
 		
 		// ACK scan data
-		sendScanDataACK(scan->getSourceAddress());
+		if(!scan->getForwarded()) {
+			sendScanDataACK(scan->getSourceAddress());
+		}
 		
 		// Forward scan data to requesting server (if any)
 		std::map<std::string, std::list<ScanServerForward> >::iterator requestingServer = scanToServer.find(scan->getSourceAddress());
@@ -134,7 +136,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 				if(record.until > simTime().dbl()) {
 					std:: cout << "C Forward scan data to requesting server " << record.server << std::endl;
 					auto address = IPvXAddressResolver().resolve(record.server.c_str());
-					socket.sendTo(scan->dup(), address, PORT);
+					ScanDataMessage *fwd = scan->dup();
+					fwd->setForwarded(true);
+					socket.sendTo(fwd, address, PORT);
 				}
 			}
 		}
@@ -163,6 +167,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 }
 
 void ParkingPlaceManagerApp::sendScanDataACK(std::string to) {
+	std::cout << getServerName() << " sending ACK to " << to << std::endl;
 	ScanDataACKMessage *ackMsg = new ScanDataACKMessage("Scan ACK");
 	ackMsg->setByteLength(1);
 	ackMsg->setDestinationAddress(to.c_str());
@@ -177,7 +182,7 @@ void ParkingPlaceManagerApp::dumpRecords() {
 	for(auto record: records) {
 		const CarRecord &car = record.second;
 		//std::cout << record.first << ": mode: " << car.mode << " pos: " << car.position << " road: " << car.road << " heading: " << car.heading << " speed: " << car.speed << std::endl;
-		std::cout << car.toString() << std::endl;
+		std::cout << car.toString() << " at " << car.server  << std::endl;
 	}
 	std::cout << "### End records: " << std::endl;
 }
