@@ -30,6 +30,17 @@ void ParkingPlaceManagerApp::initialize(int stage){
 void ParkingPlaceManagerApp::finish(){
 }
 
+std::vector<std::string> ParkingPlaceManagerApp::getLocalRequestingCars(std::string scanningCar) {
+	std::vector<std::string> result;
+	
+	std::map<std::string, std::string>::iterator requester = scanToRequester.find(scanningCar);
+	if(requester != scanToRequester.end()) {
+		result.push_back(requester->second);
+	}
+	
+	return result;
+}
+
 void ParkingPlaceManagerApp::process() {
 	std::cout << "# server processing queue # "<< simTime() << " # " << getServerName() << " # "<< toProcess.size() << std::endl;
 	
@@ -38,8 +49,7 @@ void ParkingPlaceManagerApp::process() {
 		toProcess.pop();
 		
 		// Schedule delivery of result to requesting car (if any)
-		std::map<std::string, std::string>::iterator requester = scanToRequester.find(scan->getSourceAddress());
-		if(requester != scanToRequester.end()) {
+		for(std::string requester: getLocalRequestingCars(scan->getSourceAddress())) {
 			// Create result message and deliver it with delay to self, it will be resend later to recipient
 			ScanResultMessage *resultMsg = new ScanResultMessage("Scan result");
 			
@@ -48,7 +58,7 @@ void ParkingPlaceManagerApp::process() {
 			
 			resultMsg->setByteLength(64);
 			resultMsg->setNetworkType(LTE);
-			resultMsg->setDestinationAddress(requester->second.c_str());
+			resultMsg->setDestinationAddress(requester.c_str());
 			resultMsg->setSourceAddress(getServerName());
 			
 			IPv4Address address = manager->getIPAddressForID(resultMsg->getDestinationAddress());
@@ -130,11 +140,11 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		// Forward scan data to requesting server (if any)
 		std::map<std::string, std::list<ScanServerForward> >::iterator requestingServer = scanToServer.find(scan->getSourceAddress());
 		if(requestingServer != scanToServer.end()) {
-			std:: cout << "A Forward scan data to requesting serer " << std::endl;
+//			std:: cout << "A Forward scan data to requesting serer " << std::endl;
 			for(ScanServerForward &record: requestingServer->second) {
-				std:: cout << "B Forward scan data to requesting server " << record.server << std::endl;
+//				std:: cout << "B Forward scan data to requesting server " << record.server << std::endl;
 				if(record.until > simTime().dbl()) {
-					std:: cout << "C Forward scan data to requesting server " << record.server << std::endl;
+//					std:: cout << "C Forward scan data to requesting server " << record.server << std::endl;
 					auto address = IPvXAddressResolver().resolve(record.server.c_str());
 					ScanDataMessage *fwd = scan->dup();
 					fwd->setForwarded(true);
@@ -144,7 +154,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		}
 		
 		// Schedule message to process
-		if(scan->getPart() == 0) {
+		if(scan->getPart() == 0 && !getLocalRequestingCars(scan->getSourceAddress()).empty()) {
 			toProcess.push(scan);
 		}
 		

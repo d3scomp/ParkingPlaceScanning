@@ -77,6 +77,8 @@ private:
 	std::map<std::string, std::string> scanToRequester; // scanner car -> scan requesting car
 	std::map<std::string, std::list<ScanServerForward> > scanToServer; // scanner car -> server managing requesting car
 	
+	std::vector<std::string> getLocalRequestingCars(std::string scanningCar);
+	
 	void dumpRecords();
 	
 	void ensemble();
