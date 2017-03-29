@@ -22,7 +22,7 @@ def plot_ete_latency():
 	ax1.set_title("End to end delay")
 
 	ax2 = fig.add_subplot(122)
-	ax2.plot(times, data, 'wo')
+	ax2.plot(times, data, 'b.')
 	ax2.set_xlabel("timestamp in seconds")
 	ax2.set_ylabel("latency in milliseconds")
 	ax2.set_title("End to end delay")
@@ -50,7 +50,7 @@ def plot_ete_distance():
 	ax1.set_title("Scan distance (+ ~ ahead)")
 
 	ax2 = fig.add_subplot(122)
-	ax2.plot(times, data, 'wo')
+	ax2.plot(times, data, 'b.')
 	ax2.set_xlabel("timestamp in seconds")
 	ax2.set_ylabel("distance in meters")
 	ax2.set_title("Scan distance (+ ~ ahead)")
@@ -142,14 +142,20 @@ def plot_server_queue():
 		fig = plt.figure()
 
 		ax1 = fig.add_subplot(121)
-		ax1.boxplot([data["server1"], data["server2"], data["server3"]], notch=True)
+		boxdata = []
+		for server in data.keys():
+			boxdata.append(data[server])
+		ax1.boxplot(boxdata, notch=True)
 		ax1.set_xlabel("server")
 		ax1.set_ylabel("# scans to process")
 		ax1.set_title("server queue length")
 
 		ax2 = fig.add_subplot(122)
+		cnt = 0
+		colors = ["red", "green", "blue"]
 		for server in data.keys():
-			ax2.plot(times[server], data[server], "wo")
+			ax2.plot(times[server], data[server], color=colors[cnt])
+			cnt += 1
 		ax2.set_xlabel("timestamp in seconds")
 		ax2.set_ylabel("# scans to process")
 		ax2.set_title("server queue length")
