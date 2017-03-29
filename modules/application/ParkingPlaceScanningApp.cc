@@ -68,7 +68,7 @@ void ParkingPlaceScanningApp::reportStatus() {
 	const double heading = mobility->getAngleRad();
 	const double speed = mobility->getSpeed();
 	
-	std:: cout << "### " << getId() << " reporting status: position: " << position << " heading: " << heading << " road: " << road << " speed:" << speed << std::endl;
+	std:: cout << "### " << getId() << " at " << SERVER << " reporting status: position: " << position << " heading: " << heading << " road: " << road << " speed:" << speed << std::endl;
 	
 	std:: cout << "# car scanning # "<< simTime() << " # " << getId() << " # "<< (bool)(scanUntil < simTime().dbl()) << std::endl;
 	

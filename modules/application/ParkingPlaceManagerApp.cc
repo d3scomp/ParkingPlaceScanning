@@ -128,8 +128,11 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 		// Forward scan data to requesting server (if any)
 		std::map<std::string, std::list<ScanServerForward> >::iterator requestingServer = scanToServer.find(scan->getSourceAddress());
 		if(requestingServer != scanToServer.end()) {
+			std:: cout << "A Forward scan data to requesting serer " << std::endl;
 			for(ScanServerForward &record: requestingServer->second) {
+				std:: cout << "B Forward scan data to requesting server " << record.server << std::endl;
 				if(record.until > simTime().dbl()) {
+					std:: cout << "C Forward scan data to requesting server " << record.server << std::endl;
 					auto address = IPvXAddressResolver().resolve(record.server.c_str());
 					socket.sendTo(scan->dup(), address, PORT);
 				}
@@ -147,12 +150,9 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	// Handle initiate scan from other servers
 	ScanRequestMessage *request = dynamic_cast<ScanRequestMessage *>(msg);
 	if(request) {
-		std::cout << "Forwarding initiate scan request to car: " << request->getCar() << std::endl;
-		request->setDestinationAddress(request->getCar());
-		auto address = manager->getIPAddressForID(request->getCar());
-		if(!address.isUnspecified()) {
-			socket.sendTo(request->dup(), address, PORT);
-		}
+		std::cout << getServerName() << " Forwarding initiate scan request to car: " << request->getCar() << std::endl;
+		
+		sendInitiateScan(records[request->getCar()]);
 		
 		// Remember mapping in order to forward results later
 		scanToServer[request->getCar()].push_back({request->getRequestingServer(), request->getUntil()});
@@ -169,7 +169,7 @@ void ParkingPlaceManagerApp::sendScanDataACK(std::string to) {
 	ackMsg->setSourceAddress(getServerName());
 	
 	auto address = manager->getIPAddressForID(to.c_str());
-	socket.sendTo(ackMsg,address, PORT);
+	socket.sendTo(ackMsg, address, PORT);
 }
 
 void ParkingPlaceManagerApp::dumpRecords() {
