@@ -19,13 +19,13 @@ def plot_ete_latency():
 	ax1 = fig.add_subplot(121)
 	ax1.boxplot(data, notch=True)
 	ax1.set_ylabel("latency in ms")
-	ax1.set_title("End to end delay")
+	ax1.set_title("End to end delay\n(avg " + str(int(round(np.mean(data)))) + " ms)")
 
 	ax2 = fig.add_subplot(122)
 	ax2.plot(times, data, '.', color="black", markersize=1.5, fillstyle=None)
 	ax2.set_xlabel("timestamp in seconds")
 	ax2.set_ylabel("latency in milliseconds")
-	ax2.set_title("End to end delay")
+	ax2.set_title("End to end delay\n(avg " + str(int(round(np.mean(data)))) + " ms)")
 
 	fig.savefig("EtE-latency.pdf")
 
@@ -47,13 +47,13 @@ def plot_ete_distance():
 	ax1 = fig.add_subplot(121)
 	ax1.boxplot(data, notch=True)
 	ax1.set_ylabel("distance in meters")
-	ax1.set_title("Scan distance (+ ~ ahead)")
+	ax1.set_title("Scan distance (+ ~ ahead)\n(avg " + str(round(np.mean(data), 1)) + ") m")
 
 	ax2 = fig.add_subplot(122)
 	ax2.plot(times, data, '.', color="black", markersize=1.5, fillstyle=None)
 	ax2.set_xlabel("timestamp in seconds")
 	ax2.set_ylabel("distance in meters")
-	ax2.set_title("Scan distance (+ ~ ahead)")
+	ax2.set_title("Scan distance (+ ~ ahead)\n(avg " + str(round(np.mean(data), 1)) + ") m")
 
 	plt.savefig("EtE-distance.pdf")
 
@@ -78,12 +78,13 @@ def plot_cars_scanning():
 		ax1.boxplot(list(data.values()), notch=True)
 		ax1.set_ylabel("#cars scanning")
 		ax1.set_title("#cars scanning")
+		ax1.set_title("#cars scanning\n(avg " + str(round(np.mean(list(data.values())), 1)) + ")")
 
 		ax2 = fig.add_subplot(122)
 		ax2.plot(list(data.keys()), list(data.values()))
 		ax2.set_xlabel("timestamp in seconds")
 		ax2.set_ylabel("#cars scanning")
-		ax2.set_title("#cars scanning")
+		ax2.set_title("#cars scanning\n(avg " + str(round(np.mean(list(data.values())), 1)) + ")")
 
 		plt.savefig("carscanning.pdf")
 
@@ -108,13 +109,13 @@ def plot_num_cars():
 		ax1 = fig.add_subplot(121)
 		ax1.boxplot(data, notch=True)
 		ax1.set_ylabel("# cars")
-		ax1.set_title("# cars")
+		ax1.set_title("# cars\n(avg " + str(round(np.mean(data), 1)) + ")")
 
 		ax2 = fig.add_subplot(122)
 		ax2.plot(times, data)
 		ax2.set_xlabel("timestamp in seconds")
 		ax2.set_ylabel("# cars")
-		ax2.set_title("# cars")
+		ax2.set_title("# cars\n(avg " + str(round(np.mean(data), 1)) + ")")
 
 		plt.savefig("cars.pdf")
 
