@@ -12,7 +12,10 @@ Define_Module(ParkingPlaceManagerApp);
 
 const std::vector<std::string> ParkingPlaceManagerApp::SERVERS = std::vector<std::string>({"server1", "server2", "server3"});
 
-ParkingPlaceManagerApp::ParkingPlaceManagerApp() {}
+ParkingPlaceManagerApp::ParkingPlaceManagerApp() {
+	ensembleMsg = new cMessage();
+	processingMsg = new cMessage();
+}
 
 ParkingPlaceManagerApp::~ParkingPlaceManagerApp() {}
 
@@ -22,8 +25,8 @@ void ParkingPlaceManagerApp::initialize(int stage){
 		manager = Veins::TraCIScenarioManagerAccess().get();
 		ASSERT(manager);
 		
-		scheduleAt(simTime() + uniform(0, 1), &ensembleMsg);
-		scheduleAt(simTime() + uniform(0, 1), &processingMsg);
+		scheduleAt(simTime() + uniform(0, 1), ensembleMsg);
+		scheduleAt(simTime() + uniform(0, 1), processingMsg);
 	}
 }
 
@@ -73,12 +76,12 @@ void ParkingPlaceManagerApp::process() {
 
 void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	if(msg->isSelfMessage()) {
-		if(msg == &ensembleMsg) {
+		if(msg == ensembleMsg) {
 			ensemble();
-			scheduleAt(SimTime(simTime()) + SimTime(ENSEMBLE_PERIOD_MS, SIMTIME_MS), &ensembleMsg);
-		} else if(msg == &processingMsg) {
+			scheduleAt(SimTime(simTime()) + SimTime(ENSEMBLE_PERIOD_MS, SIMTIME_MS), ensembleMsg);
+		} else if(msg == processingMsg) {
 			process();
-			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), &processingMsg);
+			scheduleAt(SimTime(simTime()) + SimTime(SCAN_PROCESSING_TIME_MS, SIMTIME_MS), processingMsg);
 		} else {
 			ScanResultMessage *resultMsg = dynamic_cast<ScanResultMessage *>(msg);
 			if(resultMsg) {

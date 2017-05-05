@@ -91,8 +91,8 @@ private:
 	
 	const char* getServerName();
 	
-	cMessage ensembleMsg;
-	cMessage processingMsg;
+	cMessage *ensembleMsg;
+	cMessage *processingMsg;
 	
 };
 
