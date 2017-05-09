@@ -70,7 +70,8 @@ def plot_cars_scanning():
 			time = round(float(parts[0]), 0)
 			if time not in data:
 				data[time] = 0
-			data[time] += 1
+			if value:
+				data[time] += 1
 
 		fig = plt.figure()
 
