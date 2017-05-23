@@ -133,7 +133,7 @@ void ParkingPlaceManagerApp::handleMessageWhenUp(cMessage *msg){
 	// Handle scan data
 	ScanDataMessage *scan = dynamic_cast<ScanDataMessage *>(msg);
 	if(scan) {
-		std::cout << getServerName() << " Received scan data from " << scan->getSourceAddress() << " position " << scan->getDataPosition() << " at " << scan->getDataTimestamp() << std::endl;
+		std::cout << simTime() << getServerName() << " Received scan data from " << scan->getSourceAddress() << " position " << scan->getDataPosition() << " at " << scan->getDataTimestamp() << std::endl;
 		
 		// ACK scan data
 		if(!scan->getForwarded()) {
