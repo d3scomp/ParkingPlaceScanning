@@ -41,8 +41,8 @@ private:
 	/// Status message size
 	static const size_t STATUS_SIZE = 48;
 	
-	/// Interframe delay @ 24 FPS
-	static const uint64_t SCAN_DELAY_MS = 42; 
+	/// Interframe delay @ 2 FPS
+	static const uint64_t SCAN_DELAY_MS = 500;
 	/// 648x480 @ 24bit color raw
 	//const uint64_t SCAN_SIZE = 640*480*3; 
 	/// 648x480 @ 24bit color, 30% jpeg, sample image
