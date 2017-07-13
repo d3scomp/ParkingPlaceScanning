@@ -10,7 +10,7 @@ echo ${inis}
 	echo ${ini};
 	
 	while (( $(jobs | wc -l) >= ${max_processes} )); do
-		num_children=$(ps --no-headers -o pid --ppid=$$ | wc -w);
+		:
 	done;
 	
 	logdir=${ini}.logs
