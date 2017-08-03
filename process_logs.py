@@ -3,10 +3,18 @@ import numpy as np
 import os
 import glob
 import re
-from operator import attrgetter
+import pickle
+import os.path
 
 
 def plot_ete_latency():
+	try:
+		if os.path.getctime('log.ete-lattency.txt') < os.path.getctime('log.ete-lattency.dat'):
+			file = open('log.ete-lattency.dat', 'r')
+			return float(file.readline())
+	except:
+		pass
+
 	data = []
 	times = []
 
@@ -19,6 +27,9 @@ def plot_ete_latency():
 			times.append(float(parts[0]))
 
 	ete_lattency = np.mean(data)
+	file = open('log.ete-lattency.dat', 'w')
+	file.write(str(ete_lattency))
+	file.close()
 
 	fig = plt.figure()
 
@@ -38,7 +49,15 @@ def plot_ete_latency():
 
 	return ete_lattency
 
+
 def plot_ete_distance():
+	try:
+		if os.path.getctime('log.ete-distance.txt') < os.path.getctime('log.ete-distance.dat'):
+			file = open('log.ete-distance.dat', 'r')
+			return float(file.readline())
+	except:
+		pass
+
 	data = []
 	times = []
 
@@ -51,6 +70,9 @@ def plot_ete_distance():
 			times.append(float(parts[0]))
 
 	ete_distance = np.mean(data)
+	file = open('log.ete-distance.dat', 'w')
+	file.write(str(ete_distance))
+	file.close()
 
 	fig = plt.figure()
 
@@ -70,7 +92,15 @@ def plot_ete_distance():
 
 	return ete_distance
 
+
 def plot_cars_scanning():
+	try:
+		if os.path.getctime('log.carscanning.txt') < os.path.getctime('log.carscanning.dat'):
+			file = open('log.carscanning.dat', 'r')
+			return float(file.readline())
+	except:
+		pass
+
 	data = {}
 
 	with open("log.carscanning.txt") as f:
@@ -88,6 +118,9 @@ def plot_cars_scanning():
 		fig = plt.figure()
 
 		num_scanning = np.mean(list(data.values()))
+		file = open('log.carscanning.dat', 'w')
+		file.write(str(num_scanning))
+		file.close()
 
 		ax1 = fig.add_subplot(121)
 		ax1.boxplot(list(data.values()), notch=True)
@@ -106,7 +139,15 @@ def plot_cars_scanning():
 
 		return num_scanning
 
+
 def plot_num_cars():
+	try:
+		if os.path.getctime('log.numcars.txt') < os.path.getctime('log.numcars.dat'):
+			file = open('log.numcars.dat', 'r')
+			return float(file.readline())
+	except:
+		pass
+
 	data = []
 	times = []
 
@@ -122,6 +163,9 @@ def plot_num_cars():
 			times.append(time)
 
 		avgnumcars = np.mean(data)
+		file = open('log.numcars.dat', 'w')
+		file.write(str(avgnumcars))
+		file.close()
 
 		fig = plt.figure()
 
@@ -141,7 +185,14 @@ def plot_num_cars():
 
 	return avgnumcars
 
+
 def plot_server_queue():
+	try:
+		if os.path.getctime('log.serverqueue.txt') < os.path.getctime('serverqueue.pdf'):
+			return
+	except:
+		pass
+
 	data = {}
 	times = {}
 
@@ -201,13 +252,15 @@ def plot_all():
 		ete_latency = plot_ete_latency()
 		ete_distance = plot_ete_distance()
 
-		global_data[probability] = {
+		data = {
 			"probability": probability,
 			"num_cars": num_cars,
 			"num_scanning": num_scanning,
 			"ete_latency": ete_latency,
 			"ete_distance": ete_distance
 		}
+
+		global_data[probability] = data
 
 	os.chdir(base)
 
@@ -230,16 +283,11 @@ def plot_global(global_data):
 
 	print(ete_latency)
 
-	ax1.plot(num_cars, ete_latency, "bs")
+	ax1.plot(num_cars, ete_latency, "bx")
 
-
-	#boxdata = []
-	#for server in data.keys():
-	#	boxdata.append(data[server])
-	#ax1.boxplot(boxdata, notch=True)
-	#ax1.set_xlabel("server")
-	#ax1.set_ylabel("# scans to process")
-	#ax1.set_title("server queue length")
+	ax1.set_xlabel("Average number of cars")
+	ax1.set_ylabel("Average end to end latency in milliseconds")
+	ax1.set_title("Average number of cars vs average EtE latency")
 
 	plt.savefig("global.pdf")
 	plt.close()
