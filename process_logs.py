@@ -281,8 +281,10 @@ def plot_global(global_data):
 	qn_num_cars = (10, 20, 30, 40, 50)
 	qn_ete_latency = (140.86, 341.67, 783.92, 1381.9, 1949.83)
 
+	print("Num cars: ")
 	print(num_cars)
 
+	print("EtE latency")
 	print(ete_latency)
 
 	ax1.plot(num_cars, ete_latency, "bx")
@@ -335,3 +337,8 @@ def plot_global_num_vs_probability(global_data):
 global_data = plot_all()
 plot_global(global_data)
 plot_global_num_vs_probability(global_data)
+
+#print data in simple format
+print("num_cars ete_latency [ms]")
+for record in sorted(list(global_data.values()), key=lambda x: x["num_cars"]):
+	print(str(record["num_cars"]) + " " + str(record["ete_latency"]))
