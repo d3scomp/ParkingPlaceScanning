@@ -268,9 +268,7 @@ def plot_all():
 
 
 def plot_global(global_data):
-	print("Unsorted Data: " + str(global_data.values()))
-	data = sorted(list(global_data.values()), key=lambda x: x["probability"])
-	print("Data: " + str(data))
+	data = list(global_data.values())
 
 	fig = plt.figure()
 
@@ -293,6 +291,35 @@ def plot_global(global_data):
 	plt.close()
 
 
+def plot_global_num_vs_probability(global_data):
+	data = sorted(list(global_data.values()), key=lambda x: x["probability"])
+
+	print("Data: " + str(data))
+	file = open('global.data', 'w')
+	file.write(repr(data))
+	file.close()
+
+	fig = plt.figure()
+
+	ax1 = fig.add_subplot(1,1,1)
+
+	num_cars = list(map(lambda x: x["num_cars"], data))
+	probability = list(map(lambda x: x["probability"], data))
+
+	print(num_cars)
+	print(probability)
+
+	ax1.plot(probability, num_cars, "bx")
+
+	ax1.set_xlabel("Car emergence probability")
+	ax1.set_ylabel("Average number of cars")
+	ax1.set_title("Probability vs num cars")
+
+	plt.savefig("global_num_vs_probability.pdf")
+	plt.close()
+
+
 
 global_data = plot_all()
 plot_global(global_data)
+plot_global_num_vs_probability(global_data)
