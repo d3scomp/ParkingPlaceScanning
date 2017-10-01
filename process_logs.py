@@ -295,6 +295,10 @@ def plot_global(global_data):
 #	ax1.set_ylim(0, 10000)
 	ax1.set_yscale("log", nonposy='clip')
 
+	blue_patch = mpatches.Patch(color='blue', label='Simulation data')
+	red_patch = mpatches.Patch(color='red', label='Prediction data')
+	plt.legend(handles=[blue_patch, red_patch])
+
 	plt.savefig("global.pdf")
 	plt.close()
 
