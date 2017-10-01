@@ -293,6 +293,7 @@ def plot_global(global_data):
 	ax1.set_title("Average number of cars vs average EtE latency")
 
 #	ax1.set_ylim(0, 10000)
+	ax1.set_yscale("log", nonposy='clip')
 
 	plt.savefig("global.pdf")
 	plt.close()
