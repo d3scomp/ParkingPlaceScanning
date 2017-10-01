@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import os
 import glob
@@ -277,15 +278,21 @@ def plot_global(global_data):
 	num_cars = list(map(lambda x: x["num_cars"], data))
 	ete_latency = list(map(lambda x: x["ete_latency"], data))
 
+	qn_num_cars = (10, 20, 30, 40, 50)
+	qn_ete_latency = (140.86, 341.67, 783.92, 1381.9, 1949.83)
+
 	print(num_cars)
 
 	print(ete_latency)
 
 	ax1.plot(num_cars, ete_latency, "bx")
+	ax1.plot(qn_num_cars, qn_ete_latency, "rx")
 
 	ax1.set_xlabel("Average number of cars")
 	ax1.set_ylabel("Average end to end latency in milliseconds")
 	ax1.set_title("Average number of cars vs average EtE latency")
+
+#	ax1.set_ylim(0, 10000)
 
 	plt.savefig("global.pdf")
 	plt.close()
