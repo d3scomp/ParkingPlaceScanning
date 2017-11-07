@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 import numpy as np
 import os
 import glob
 import re
 import pickle
 import os.path
+from functools import reduce
 
 
 def plot_ete_latency():
@@ -189,8 +189,9 @@ def plot_num_cars():
 
 def plot_server_queue():
 	try:
-		if os.path.getctime('log.serverqueue.txt') < os.path.getctime('serverqueue.pdf'):
-			return
+		if os.path.getctime('log.serverqueue.txt') < os.path.getctime('log.serverqueue.dat'):
+			file = open('log.serverqueue.dat', 'r')
+			return float(file.readline())
 	except:
 		pass
 
@@ -212,6 +213,11 @@ def plot_server_queue():
 
 			data[server].append(value)
 			times[server].append(time)
+
+		avg_server_queue_len = np.mean(reduce(lambda a,b: a + b, data.values(), []))
+		file = open('log.serverqueue.dat', 'w')
+		file.write(str(avg_server_queue_len))
+		file.close()
 
 		fig = plt.figure()
 
@@ -237,6 +243,8 @@ def plot_server_queue():
 		plt.savefig("serverqueue.pdf")
 		plt.close()
 
+		return avg_server_queue_len
+
 
 def plot_all():
 	base = os.getcwd()
@@ -247,7 +255,7 @@ def plot_all():
 		print("Processing logs in " + os.getcwd())
 
 		probability = float(re.sub(".*-|\.ini.*", "", log))
-		#plot_server_queue()
+		server_queue = plot_server_queue()
 		num_cars = plot_num_cars()
 		num_scanning = plot_cars_scanning()
 		ete_latency = plot_ete_latency()
@@ -258,7 +266,8 @@ def plot_all():
 			"num_cars": num_cars,
 			"num_scanning": num_scanning,
 			"ete_latency": ete_latency,
-			"ete_distance": ete_distance
+			"ete_distance": ete_distance,
+			"server_queue": server_queue
 		}
 
 		global_data[probability] = data
@@ -274,9 +283,11 @@ def plot_global(global_data):
 	fig = plt.figure()
 
 	ax1 = fig.add_subplot(1,1,1)
+	ax2 = ax1.twinx()
 
 	num_cars = list(map(lambda x: x["num_cars"], data))
 	ete_latency = list(map(lambda x: x["ete_latency"], data))
+	server_queue = list(map(lambda x: x["server_queue"], data))
 
 	qn_num_cars = (10, 20, 30, 40, 50)
 	qn_ete_latency = (140.86, 341.67, 783.92, 1381.9, 1949.83)
@@ -287,19 +298,27 @@ def plot_global(global_data):
 	print("EtE latency")
 	print(ete_latency)
 
-	ax1.plot(num_cars, ete_latency, "bx")
-	ax1.plot(qn_num_cars, qn_ete_latency, "rx")
+	print("Server queue")
+	print(server_queue)
+
+	ete_plot, = ax1.plot(num_cars, ete_latency, "b^")
+	qn_cars_plot, = ax1.plot(qn_num_cars, qn_ete_latency, "rs")
+	server_queue_plot, = ax2.plot(num_cars, server_queue, "g*")
 
 	ax1.set_xlabel("Average number of cars")
 	ax1.set_ylabel("Average end to end latency in milliseconds")
 	ax1.set_title("Average number of cars vs average EtE latency")
 
+	ax2.set_ylabel("Average server queue length")
+
 #	ax1.set_ylim(0, 10000)
 	ax1.set_yscale("log", nonposy='clip')
+	ax2.set_yscale("log", nonposy='clip')
 
-	blue_patch = mpatches.Patch(color='blue', label='Simulation data')
-	red_patch = mpatches.Patch(color='red', label='Prediction data')
-	plt.legend(handles=[blue_patch, red_patch])
+	plt.legend(
+		(ete_plot, qn_cars_plot, server_queue_plot),
+		("Simulated latency", "Predicted latency", "Server queue length")
+	)
 
 	plt.savefig("global.pdf")
 	plt.close()
@@ -333,12 +352,11 @@ def plot_global_num_vs_probability(global_data):
 	plt.close()
 
 
-
 global_data = plot_all()
 plot_global(global_data)
 plot_global_num_vs_probability(global_data)
 
 #print data in simple format
-print("num_cars ete_latency [ms]")
+print("num_cars;\t\tete_latency [ms];\tserver_queue")
 for record in sorted(list(global_data.values()), key=lambda x: x["num_cars"]):
-	print(str(record["num_cars"]) + " " + str(record["ete_latency"]))
+	print(str(record["num_cars"]) + ";\t" + str(record["ete_latency"]) + ";\t\t" + str(record["server_queue"]))
