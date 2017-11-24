@@ -274,11 +274,11 @@ def plot_all():
 
 	os.chdir(base)
 
-	return global_data
+	return list(global_data.values())
 
 
 def plot_global(global_data):
-	data = list(global_data.values())
+	data = sorted(global_data, key=lambda x: x["num_cars"])
 
 	fig = plt.figure()
 
@@ -289,8 +289,18 @@ def plot_global(global_data):
 	ete_latency = list(map(lambda x: x["ete_latency"], data))
 	server_queue = list(map(lambda x: x["server_queue"], data))
 
-	qn_num_cars = (10, 20, 30, 40, 50)
-	qn_ete_latency = (140.86, 341.67, 783.92, 1381.9, 1949.83)
+	qn_num_cars = (3, 7, 10, 13, 16, 20, 30, 40, 50)
+	qn_ete_latency = (93.89, 137.08, 143.67, 187.09, 249.67, 343.48, 783.92, 1381.9, 1949.83)
+
+	# Strip extra data
+	real_data_take_first = 10
+	num_cars = num_cars[:real_data_take_first]
+	ete_latency = ete_latency[:real_data_take_first]
+	server_queue = server_queue[:real_data_take_first]
+
+	prediction_data_take_first = 6
+	qn_num_cars = qn_num_cars[:prediction_data_take_first]
+	qn_ete_latency = qn_ete_latency[:prediction_data_take_first]
 
 	print("Num cars: ")
 	print(num_cars)
@@ -311,9 +321,10 @@ def plot_global(global_data):
 
 	ax2.set_ylabel("Average server queue length")
 
-#	ax1.set_ylim(0, 10000)
-	ax1.set_yscale("log", nonposy='clip')
-	ax2.set_yscale("log", nonposy='clip')
+#	ax1.set_ylim(0, 1000)
+#	ax1.set_xlim(0, 25)
+#	ax1.set_yscale("log", nonposy='clip')
+#	ax2.set_yscale("log", nonposy='clip')
 
 	plt.legend(
 		(ete_plot, qn_cars_plot, server_queue_plot),
@@ -325,7 +336,7 @@ def plot_global(global_data):
 
 
 def plot_global_num_vs_probability(global_data):
-	data = sorted(list(global_data.values()), key=lambda x: x["probability"])
+	data = sorted(global_data, key=lambda x: x["probability"])
 
 	print("Data: " + str(data))
 	file = open('global.data', 'w')
@@ -358,5 +369,5 @@ plot_global_num_vs_probability(global_data)
 
 #print data in simple format
 print("num_cars;\t\tete_latency [ms];\tserver_queue")
-for record in sorted(list(global_data.values()), key=lambda x: x["num_cars"]):
+for record in sorted(global_data, key=lambda x: x["num_cars"]):
 	print(str(record["num_cars"]) + ";\t" + str(record["ete_latency"]) + ";\t\t" + str(record["server_queue"]))
