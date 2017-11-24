@@ -284,6 +284,7 @@ def plot_global(global_data):
 
 	ax1 = fig.add_subplot(1,1,1)
 	ax2 = ax1.twinx()
+	ax1.grid(True)
 
 	num_cars = list(map(lambda x: x["num_cars"], data))
 	ete_latency = list(map(lambda x: x["ete_latency"], data))
@@ -368,6 +369,6 @@ plot_global(global_data)
 plot_global_num_vs_probability(global_data)
 
 #print data in simple format
-print("num_cars;\t\tete_latency [ms];\tserver_queue")
+print("prob.;\tnum_cars;\t\tete_latency [ms];\tserver_queue")
 for record in sorted(global_data, key=lambda x: x["num_cars"]):
-	print(str(record["num_cars"]) + ";\t" + str(record["ete_latency"]) + ";\t\t" + str(record["server_queue"]))
+	print(str(record["probability"]) + ";\t" + str(record["num_cars"]) + ";\t" + str(record["ete_latency"]) + ";\t\t" + str(record["server_queue"]))
