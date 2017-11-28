@@ -294,7 +294,7 @@ def plot_global(global_data):
 	qn_ete_latency = (93.89, 137.08, 143.67, 187.09, 249.67, 343.48, 783.92, 1381.9, 1949.83)
 
 	# Strip extra data
-	real_data_take_first = 10
+	real_data_take_first = 57
 	num_cars = num_cars[:real_data_take_first]
 	ete_latency = ete_latency[:real_data_take_first]
 	server_queue = server_queue[:real_data_take_first]
