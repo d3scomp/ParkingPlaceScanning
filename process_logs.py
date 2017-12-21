@@ -312,6 +312,17 @@ def plot_global(global_data):
 	print("Server queue")
 	print(server_queue)
 
+	# Trend lines
+	poly_degree = 5
+	ete_latency_z = np.polyfit(num_cars, ete_latency, poly_degree)
+	ete_latency_p = np.poly1d(ete_latency_z)
+
+	qn_ete_latency_z = np.polyfit(qn_num_cars, qn_ete_latency, poly_degree)
+	qn_ete_latency_p = np.poly1d(qn_ete_latency_z)
+
+	ax1.plot(num_cars, ete_latency_p(num_cars), "-", color="lightskyblue")
+	ax1.plot(qn_num_cars, qn_ete_latency_p(qn_num_cars), "-", color="salmon")
+
 	ete_plot, = ax1.plot(num_cars, ete_latency, "b^")
 	qn_cars_plot, = ax1.plot(qn_num_cars, qn_ete_latency, "rs")
 	server_queue_plot, = ax2.plot(num_cars, server_queue, "g*")
@@ -334,6 +345,9 @@ def plot_global(global_data):
 
 	plt.savefig("global.pdf")
 	plt.close()
+
+	for num in qn_num_cars:
+		print("num_cars: " + str(num) + " : " + str(ete_latency_p(num)))
 
 
 def plot_global_num_vs_probability(global_data):
@@ -372,3 +386,14 @@ plot_global_num_vs_probability(global_data)
 print("prob.;\tnum_cars;\t\tete_latency [ms];\tserver_queue")
 for record in sorted(global_data, key=lambda x: x["num_cars"]):
 	print(str(record["probability"]) + ";\t" + str(record["num_cars"]) + ";\t" + str(record["ete_latency"]) + ";\t\t" + str(record["server_queue"]))
+
+
+# Process simsec/sec data
+with open('simsec-sec.txt') as simsecsec_file:
+	simsecsec = list(map(lambda x: float(x), simsecsec_file.read().splitlines()))
+
+simsecsec_avg = sum(simsecsec) / len(simsecsec)
+print("Avertage simsec/sec : " + str(simsecsec_avg))
+print("Considering 3600 sec, average sim time is : " + str(3600 / simsecsec_avg))
+
+print(simsecsec)

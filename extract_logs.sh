@@ -13,3 +13,8 @@ for log in *.logs; do
 	cat log.txt | grep "^# server processing queue #" | cut -d "#" -f 3,4,5 --output-delimiter=" " | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]//' > log.serverqueue.txt
 	
 done;
+
+
+# Extract simulation performance
+grep -R "simsec/sec" *.logs | sed 's/[ \t][ \t]*/ /g' | cut -d " " -f 4 | sed 's/simsec\/sec=//' > simsec-sec.txt
+
