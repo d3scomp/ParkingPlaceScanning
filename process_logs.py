@@ -1,3 +1,6 @@
+import matplotlib as mpl
+mpl.use('Agg')
+
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -107,14 +110,27 @@ def plot_cars_scanning():
 	with open("log.carscanning.txt") as f:
 		lines = f.readlines()
 
+		usage = {}
+
 		for line in lines:
 			parts = line.split(" ")
-			value = float(parts[2])
+			value = int(parts[2])
 			time = round(float(parts[0]), 0)
+			car = parts[1]
 			if time not in data:
 				data[time] = 0
 			if value:
 				data[time] += 1
+
+			if car not in usage or value == 0:
+				usage[car] = value
+
+		unused = [x[1] for x in usage.items() if x[1] == 1]
+		used = [x[1] for x in usage.items() if x[1] == 0]
+
+		with open("log.usage.dat", "w") as file:
+			print(f"used: {len(used)}, unused: {len(unused)}, ratio: {len(unused) / (len(used) + len(unused))}", file=file)
+
 
 		fig = plt.figure()
 
@@ -320,8 +336,8 @@ def plot_global(global_data):
 	qn_ete_latency_z = np.polyfit(qn_num_cars, qn_ete_latency, poly_degree)
 	qn_ete_latency_p = np.poly1d(qn_ete_latency_z)
 
-	ax1.plot(num_cars, ete_latency_p(num_cars), "-", color="lightskyblue")
-	ax1.plot(qn_num_cars, qn_ete_latency_p(qn_num_cars), "-", color="salmon")
+	ete_latency_trend, = ax1.plot(num_cars, ete_latency_p(num_cars), "-", color="lightskyblue")
+	qn_ete_latency_trend, = ax1.plot(qn_num_cars, qn_ete_latency_p(qn_num_cars), "-", color="salmon")
 
 	ete_plot, = ax1.plot(num_cars, ete_latency, "b^")
 	qn_cars_plot, = ax1.plot(qn_num_cars, qn_ete_latency, "rs")
@@ -339,8 +355,8 @@ def plot_global(global_data):
 #	ax2.set_yscale("log", nonposy='clip')
 
 	plt.legend(
-		(ete_plot, qn_cars_plot, server_queue_plot),
-		("Simulated latency", "Predicted latency", "Server queue length")
+		(ete_plot, ete_latency_trend, qn_cars_plot, qn_ete_latency_trend, server_queue_plot),
+		("Simulated latency", "Simulated latency trend", "Predicted latency", "Predicted latency trend", "Server queue length")
 	)
 
 	plt.savefig("global.pdf")
