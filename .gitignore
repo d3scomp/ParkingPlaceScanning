@@ -18,3 +18,7 @@ logs/*.txt
 prague.sumo.*.cfg
 prague.rou.*.xml
 omnetpp-probability-*.ini
+*.pdf
+*.txt
+*.data
+logs.work-in-progress-paper
