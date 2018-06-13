@@ -41,6 +41,9 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		// Determine server name
 		SERVER = "server" + getParentModule()->par("masterId").str();
 		
+		// Determine parking probability parameter
+		PARKING_PROBABILITY = par("parkingProbability").longValue();
+		
 		// Choose car mode
 		if (dblrand() < PARKING_PROBABILITY) {
 			mode = PARKING;

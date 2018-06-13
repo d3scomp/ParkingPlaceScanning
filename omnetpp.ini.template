@@ -129,6 +129,8 @@ sim-time-limit = 3600s
 
 **.eNodeBCount = 1
 
+parkingProbability = {PARKING_PROBABILITY}
+
 **.configurator.config = xmldoc("topology-config.xml")
 **.server*.numUdpApps = 1
 *.server*.udpApp[0].typename = "ParkingPlaceManagerApp"
@@ -210,6 +212,7 @@ sim-time-limit = 3600s
 **.ueTxPower = 26
 **.microTxPower = 20
 **.eNodeBTxPower = 45
+
 
 [Config nodebug]
 description = "default settings"
