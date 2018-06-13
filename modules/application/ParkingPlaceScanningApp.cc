@@ -43,6 +43,7 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		
 		// Determine parking probability parameter
 		PARKING_PROBABILITY = par("parkingProbability").longValue();
+		std::cout << "Parking Probability: " << PARKING_PROBABILITY << std::endl;
 		
 		// Choose car mode
 		if (dblrand() < PARKING_PROBABILITY) {

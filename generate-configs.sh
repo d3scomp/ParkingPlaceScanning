@@ -25,9 +25,9 @@ echo "and ${runs} run multiplicity ?"
 echo "Press ENTER to proceed...";
 read -r;
 
-for i in $(seq ${runs}); do
-	for parking_probability in $(seq ${parking_from} ${parking_step} ${parking_to}); do
-		for car_probability in $(seq ${car_from} ${car_step} ${car_to}); do
+for i in $(seq -w ${runs}); do
+	for parking_probability in $(seq -w ${parking_from} ${parking_step} ${parking_to}); do
+		for car_probability in $(seq -w ${car_from} ${car_step} ${car_to}); do
 		#	echo ${p};
 			sumo_port=$((${sumo_port} + 1))
 		#	echo ${sumo_port}

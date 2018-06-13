@@ -17,7 +17,7 @@ modules/messages/*_m.cc
 logs/*.txt
 prague.sumo.*.cfg
 prague.rou.*.xml
-omnetpp-probability-*.ini
+omnetpp-car-*.ini
 *.pdf
 *.txt
 *.data

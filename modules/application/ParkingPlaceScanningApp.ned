@@ -23,8 +23,10 @@ import org.car2x.veins.modules.application.ieee80211p.BaseWaveApplLayer;
 
 simple ParkingPlaceScanningApp
 {
-    @class(ParkingPlaceScanningApp);
-    @display("i=block/app2");
+	parameters:
+		@class(ParkingPlaceScanningApp);
+		@display("i=block/app2");
+		double parkingProbability;
 	
     gates:
         output toDecisionMaker;

@@ -129,7 +129,7 @@ sim-time-limit = 3600s
 
 **.eNodeBCount = 1
 
-parkingProbability = {PARKING_PROBABILITY}
+**.application.parkingProbability = {PARKING_PROBABILITY}
 
 **.configurator.config = xmldoc("topology-config.xml")
 **.server*.numUdpApps = 1
