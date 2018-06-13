@@ -2,7 +2,7 @@
 
 max_processes=3
 
-inis=$(ls omnetpp-probability-*.ini)
+inis=$(ls omnetpp-car*.ini)
 
 echo ${inis}
 
@@ -17,6 +17,6 @@ echo ${inis}
 	
 	mkdir -p ${logdir}
 	
-	(echo "Running ${ini}"; ./ParkPlaceScanning.sh -u Cmdenv -f ${ini} > ${logdir}/log.txt ) &
+	(echo "Running ${ini}"; ./ParkPlaceScanning.sh -u Cmdenv -f ${ini} | xz > ${logdir}/log.txt.xz ) &
 	
 done;
