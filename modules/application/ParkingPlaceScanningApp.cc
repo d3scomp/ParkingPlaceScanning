@@ -42,8 +42,8 @@ void ParkingPlaceScanningApp::initialize(int stage) {
 		SERVER = "server" + getParentModule()->par("masterId").str();
 		
 		// Determine parking probability parameter
-		PARKING_PROBABILITY = par("parkingProbability").longValue();
-		std::cout << "Parking Probability: " << PARKING_PROBABILITY << std::endl;
+		PARKING_PROBABILITY = par("parkingProbability").doubleValue();
+		std::cout << "# parking probability #" << simTime() << " # " << getId() << " # " << PARKING_PROBABILITY << std::endl;
 		
 		// Choose car mode
 		if (dblrand() < PARKING_PROBABILITY) {
