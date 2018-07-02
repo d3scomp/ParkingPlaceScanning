@@ -129,7 +129,8 @@ def plot_cars_scanning():
 		used = [x[1] for x in usage.items() if x[1] == 0]
 
 		with open("log.usage.dat", "w") as file:
-			print(f"used: {len(used)}, unused: {len(unused)}, ratio: {len(unused) / (len(used) + len(unused))}", file=file)
+			if len(used) + len(unused) > 0:
+				print(f"used: {len(used)}, unused: {len(unused)}, ratio: {len(unused) / (len(used) + len(unused))}", file=file)
 
 
 		fig = plt.figure()
@@ -270,15 +271,25 @@ def plot_all():
 		os.chdir(base + os.sep + log)
 		print("Processing logs in " + os.getcwd())
 
-		probability = float(re.sub(".*-|\.ini.*", "", log))
-		server_queue = plot_server_queue()
+		match_dict = re.match(".*-car-(?P<car_probability>[0-9.]+)-parking-(?P<parking_probability>[0-9.]+)-run-(?P<run>[0-9]+)", log).groupdict()
+
+		car_probability = float(match_dict["car_probability"])
+		parking_probability = float(match_dict["parking_probability"])
+		run = int(match_dict["run"])
+
 		num_cars = plot_num_cars()
+		if num_cars == 0:
+			print("Skipping: probability: " + str(parking_probability))
+			continue
+
 		num_scanning = plot_cars_scanning()
+		server_queue = plot_server_queue()
 		ete_latency = plot_ete_latency()
 		ete_distance = plot_ete_distance()
 
 		data = {
-			"probability": probability,
+			"car_probability": car_probability,
+			"parking_probability": parking_probability,
 			"num_cars": num_cars,
 			"num_scanning": num_scanning,
 			"ete_latency": ete_latency,
@@ -286,7 +297,7 @@ def plot_all():
 			"server_queue": server_queue
 		}
 
-		global_data[probability] = data
+		global_data[(car_probability, parking_probability, run)] = data
 
 	os.chdir(base)
 
@@ -296,69 +307,78 @@ def plot_all():
 def plot_global(global_data):
 	data = sorted(global_data, key=lambda x: x["num_cars"])
 
-	fig = plt.figure()
+	fig = plt.figure(figsize=(8.27, 11.69))
 
-	ax1 = fig.add_subplot(1,1,1)
-	ax2 = ax1.twinx()
-	ax1.grid(True)
+	for x in data:
+		print(x["parking_probability"])
 
-	num_cars = list(map(lambda x: x["num_cars"], data))
-	ete_latency = list(map(lambda x: x["ete_latency"], data))
-	server_queue = list(map(lambda x: x["server_queue"], data))
+	for parking_prob, ax in zip([0.25, 0.50, 0.75], fig.subplots(3)):
+		filtered_data = list(filter(lambda x: x["parking_probability"] == parking_prob, data))
 
-	qn_num_cars = (3, 7, 10, 13, 16, 20, 30, 40, 50)
-	qn_ete_latency = (93.89, 137.08, 143.67, 187.09, 249.67, 343.48, 783.92, 1381.9, 1949.83)
+		ax1 = ax
+		ax2 = ax1.twinx()
+		ax1.grid(True)
 
-	# Strip extra data
-	real_data_take_first = 57
-	num_cars = num_cars[:real_data_take_first]
-	ete_latency = ete_latency[:real_data_take_first]
-	server_queue = server_queue[:real_data_take_first]
+		car_probability = list(map(lambda x: x["car_probability"], filtered_data))
+		parking_probability = list(map(lambda x: x["parking_probability"], filtered_data))
+		num_cars = list(map(lambda x: x["num_cars"], filtered_data))
+		ete_latency = list(map(lambda x: x["ete_latency"], filtered_data))
+		server_queue = list(map(lambda x: x["server_queue"], filtered_data))
 
-	prediction_data_take_first = 6
-	qn_num_cars = qn_num_cars[:prediction_data_take_first]
-	qn_ete_latency = qn_ete_latency[:prediction_data_take_first]
+		qn_num_cars = (3, 7, 10, 13, 16, 20, 30, 40, 50)
+		qn_ete_latency = (93.89, 137.08, 143.67, 187.09, 249.67, 343.48, 783.92, 1381.9, 1949.83)
 
-	print("Num cars: ")
-	print(num_cars)
+		# Strip extra data
+		# real_data_take_first = 57
+		# num_cars = num_cars[:real_data_take_first]
+		# ete_latency = ete_latency[:real_data_take_first]
+		# server_queue = server_queue[:real_data_take_first]
+		#
+		# prediction_data_take_first = 6
+		# qn_num_cars = qn_num_cars[:prediction_data_take_first]
+		# qn_ete_latency = qn_ete_latency[:prediction_data_take_first]
 
-	print("EtE latency")
-	print(ete_latency)
+		print("Num cars: ")
+		print(num_cars)
 
-	print("Server queue")
-	print(server_queue)
+		print("EtE latency")
+		print(ete_latency)
 
-	# Trend lines
-	poly_degree = 5
-	ete_latency_z = np.polyfit(num_cars, ete_latency, poly_degree)
-	ete_latency_p = np.poly1d(ete_latency_z)
+		print("Server queue")
+		print(server_queue)
 
-	qn_ete_latency_z = np.polyfit(qn_num_cars, qn_ete_latency, poly_degree)
-	qn_ete_latency_p = np.poly1d(qn_ete_latency_z)
+		# Trend lines
+		poly_degree = 5
+		ete_latency_z = np.polyfit(num_cars, ete_latency, poly_degree)
+		ete_latency_p = np.poly1d(ete_latency_z)
 
-	ete_latency_trend, = ax1.plot(num_cars, ete_latency_p(num_cars), "-", color="lightskyblue")
-	qn_ete_latency_trend, = ax1.plot(qn_num_cars, qn_ete_latency_p(qn_num_cars), "-", color="salmon")
+		qn_ete_latency_z = np.polyfit(qn_num_cars, qn_ete_latency, poly_degree)
+		qn_ete_latency_p = np.poly1d(qn_ete_latency_z)
 
-	ete_plot, = ax1.plot(num_cars, ete_latency, "b^")
-	qn_cars_plot, = ax1.plot(qn_num_cars, qn_ete_latency, "rs")
-	server_queue_plot, = ax2.plot(num_cars, server_queue, "g*")
+		ete_latency_trend, = ax1.plot(num_cars, ete_latency_p(num_cars), "-", color="lightskyblue")
+		qn_ete_latency_trend, = ax1.plot(qn_num_cars, qn_ete_latency_p(qn_num_cars), "-", color="salmon")
 
-	ax1.set_xlabel("Average number of cars")
-	ax1.set_ylabel("Average end to end latency in milliseconds")
-	ax1.set_title("Average number of cars vs average EtE latency")
+		ete_plot, = ax1.plot(num_cars, ete_latency, "b^")
+		qn_cars_plot, = ax1.plot(qn_num_cars, qn_ete_latency, "rs")
+		server_queue_plot, = ax2.plot(num_cars, server_queue, "g*")
 
-	ax2.set_ylabel("Average server queue length")
+		ax1.set_xlabel("Average number of cars")
+		ax1.set_ylabel("Average end to end latency in milliseconds")
+		ax1.set_title(f"Average number of cars vs average EtE latency parking probability: {parking_prob}")
 
-#	ax1.set_ylim(0, 1000)
-#	ax1.set_xlim(0, 25)
-#	ax1.set_yscale("log", nonposy='clip')
-#	ax2.set_yscale("log", nonposy='clip')
+		ax2.set_ylabel("Average server queue length")
 
-	plt.legend(
-		(ete_plot, ete_latency_trend, qn_cars_plot, qn_ete_latency_trend, server_queue_plot),
-		("Simulated latency", "Simulated latency trend", "Predicted latency", "Predicted latency trend", "Server queue length")
-	)
+		ax1.set_ylim(0, 1000)
+		ax1.set_xlim(0, 22)
+	#    ax1.set_yscale("log", nonposy='clip')
+	#   ax2.set_yscale("log", nonposy='clip')
 
+		plt.legend(
+			(ete_plot, ete_latency_trend, qn_cars_plot, qn_ete_latency_trend, server_queue_plot),
+			("Simulated latency", "Simulated latency trend", "Predicted latency, parking probability 0.5", "Predicted latency trend", "Server queue length")
+		)
+
+	plt.tight_layout()
 	plt.savefig("global.pdf")
 	plt.close()
 
@@ -367,7 +387,7 @@ def plot_global(global_data):
 
 
 def plot_global_num_vs_probability(global_data):
-	data = sorted(global_data, key=lambda x: x["probability"])
+	data = sorted(global_data, key=lambda x: x["car_probability"])
 
 	print("Data: " + str(data))
 	file = open('global.data', 'w')
@@ -379,12 +399,12 @@ def plot_global_num_vs_probability(global_data):
 	ax1 = fig.add_subplot(1,1,1)
 
 	num_cars = list(map(lambda x: x["num_cars"], data))
-	probability = list(map(lambda x: x["probability"], data))
+	car_probability = list(map(lambda x: x["car_probability"], data))
 
 	print(num_cars)
-	print(probability)
+	print(car_probability)
 
-	ax1.plot(probability, num_cars, "bx")
+	ax1.plot(car_probability, num_cars, "bx")
 
 	ax1.set_xlabel("Car emergence probability")
 	ax1.set_ylabel("Average number of cars")
@@ -401,7 +421,7 @@ plot_global_num_vs_probability(global_data)
 #print data in simple format
 print("prob.;\tnum_cars;\t\tete_latency [ms];\tserver_queue")
 for record in sorted(global_data, key=lambda x: x["num_cars"]):
-	print(str(record["probability"]) + ";\t" + str(record["num_cars"]) + ";\t" + str(record["ete_latency"]) + ";\t\t" + str(record["server_queue"]))
+	print(str(record["car_probability"]) + ";\t" + str(record["num_cars"]) + ";\t" + str(record["ete_latency"]) + ";\t\t" + str(record["server_queue"]))
 
 
 # Process simsec/sec data
