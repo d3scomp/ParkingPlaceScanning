@@ -10,8 +10,10 @@ for log in *.logs; do
 	xzcat log.txt.xz | grep "^# EtE distance #" | cut -d "#" -f 3,4,5 --output-delimiter=" " | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]//' > log.ete-distance.txt
 	xzcat log.txt.xz | grep "^# num cars #" | cut -d "#" -f 3,5 --output-delimiter=" " | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]//' > log.numcars.txt
 	xzcat log.txt.xz | grep "^# car scanning #" | cut -d "#" -f 3,4,5 --output-delimiter=" " | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]//' > log.carscanning.txt
+	
 	xzcat log.txt.xz | grep "^# server processing queue #" | cut -d "#" -f 3,4,5 --output-delimiter=" " | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]//' > log.serverqueue.txt
 	
+	xzcat log.txt.xz | grep "^# parking probability #" | cut -d "#" -f 3,4,5 --output-delimiter=" " | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]//' > log.parkingprobability.txt
 done;
 
 
