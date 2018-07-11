@@ -6,9 +6,9 @@ import numpy as np
 import os
 import glob
 import re
-import pickle
 import os.path
 from functools import reduce
+import csv
 
 
 def plot_ete_latency():
@@ -402,10 +402,18 @@ def plot_global(global_data):
 def plot_global_num_vs_probability(global_data):
 	data = sorted(global_data, key=lambda x: x["car_probability"])
 
+	# Write global data as repr
 	print("Data: " + str(data))
 	file = open('global.data', 'w')
 	file.write(repr(data))
 	file.close()
+
+	# Write global data as CSV
+	with open("global.csv", "w") as f:
+		writer = csv.DictWriter(f, fieldnames=data[0].keys())
+		writer.writeheader()
+		for d in data:
+			writer.writerow(d)
 
 	fig = plt.figure()
 

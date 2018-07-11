@@ -22,4 +22,5 @@ omnetpp-car-*.ini.logs
 *.pdf
 *.txt
 *.data
+*.csv
 logs.work-in-progress-paper
