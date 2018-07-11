@@ -18,6 +18,7 @@ logs/*.txt
 prague.sumo.*.cfg
 prague.rou.*.xml
 omnetpp-car-*.ini
+omnetpp-car-*.ini.logs
 *.pdf
 *.txt
 *.data
