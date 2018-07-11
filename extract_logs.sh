@@ -14,6 +14,12 @@ for log in *.logs; do
 	xzcat log.txt.xz | grep "^# server processing queue #" | cut -d "#" -f 3,4,5 --output-delimiter=" " | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]//' > log.serverqueue.txt
 	
 	xzcat log.txt.xz | grep "^# parking probability #" | cut -d "#" -f 3,4,5 --output-delimiter=" " | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]//' > log.parkingprobability.txt
+
+	xzcat log.txt.xz | sed -e '/Simulation time limit reached/,$d' | grep -c "ParkingPlaceScanningApp: constructor" > log.carapperances.txt
+	xzcat log.txt.xz | sed -e '/Simulation time limit reached/,$d' | grep -c "ParkingPlaceScanningApp: destructor" > log.cardisappearances.txt
+
+
+	xzcat log.txt.xz | grep "Simulation time limit reached -- simulation stopped at event" | sed 's/.*t=\([0-9]*\)\./\1/' > log.duration.txt
 done;
 
 
