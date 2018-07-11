@@ -35,21 +35,21 @@ def plot_ete_latency():
 	file.write(str(ete_lattency))
 	file.close()
 
-	fig = plt.figure()
-
-	ax1 = fig.add_subplot(121)
-	ax1.boxplot(data, notch=True)
-	ax1.set_ylabel("latency in ms")
-	ax1.set_title("End to end delay\n(avg " + str(int(round(ete_lattency))) + " ms)")
-
-	ax2 = fig.add_subplot(122)
-	ax2.plot(times, data, '.', color="black", markersize=1.5, fillstyle=None)
-	ax2.set_xlabel("timestamp in seconds")
-	ax2.set_ylabel("latency in milliseconds")
-	ax2.set_title("End to end delay\n(avg " + str(int(round(ete_lattency))) + " ms)")
-
-	fig.savefig("EtE-latency.pdf")
-	plt.close()
+	# fig = plt.figure()
+	#
+	# ax1 = fig.add_subplot(121)
+	# ax1.boxplot(data, notch=True)
+	# ax1.set_ylabel("latency in ms")
+	# ax1.set_title("End to end delay\n(avg " + str(int(round(ete_lattency))) + " ms)")
+	#
+	# ax2 = fig.add_subplot(122)
+	# ax2.plot(times, data, '.', color="black", markersize=1.5, fillstyle=None)
+	# ax2.set_xlabel("timestamp in seconds")
+	# ax2.set_ylabel("latency in milliseconds")
+	# ax2.set_title("End to end delay\n(avg " + str(int(round(ete_lattency))) + " ms)")
+	#
+	# fig.savefig("EtE-latency.pdf")
+	# plt.close()
 
 	return ete_lattency
 
@@ -78,21 +78,21 @@ def plot_ete_distance():
 	file.write(str(ete_distance))
 	file.close()
 
-	fig = plt.figure()
-
-	ax1 = fig.add_subplot(121)
-	ax1.boxplot(data, notch=True)
-	ax1.set_ylabel("distance in meters")
-	ax1.set_title("Scan distance (+ ~ ahead)\n(avg " + str(round(ete_distance, 1)) + ") m")
-
-	ax2 = fig.add_subplot(122)
-	ax2.plot(times, data, '.', color="black", markersize=1.5, fillstyle=None)
-	ax2.set_xlabel("timestamp in seconds")
-	ax2.set_ylabel("distance in meters")
-	ax2.set_title("Scan distance (+ ~ ahead)\n(avg " + str(round(ete_distance, 1)) + ") m")
-
-	plt.savefig("EtE-distance.pdf")
-	plt.close()
+	# fig = plt.figure()
+	#
+	# ax1 = fig.add_subplot(121)
+	# ax1.boxplot(data, notch=True)
+	# ax1.set_ylabel("distance in meters")
+	# ax1.set_title("Scan distance (+ ~ ahead)\n(avg " + str(round(ete_distance, 1)) + ") m")
+	#
+	# ax2 = fig.add_subplot(122)
+	# ax2.plot(times, data, '.', color="black", markersize=1.5, fillstyle=None)
+	# ax2.set_xlabel("timestamp in seconds")
+	# ax2.set_ylabel("distance in meters")
+	# ax2.set_title("Scan distance (+ ~ ahead)\n(avg " + str(round(ete_distance, 1)) + ") m")
+	#
+	# plt.savefig("EtE-distance.pdf")
+	# plt.close()
 
 	return ete_distance
 
@@ -133,27 +133,28 @@ def plot_cars_scanning():
 				print(f"used: {len(used)}, unused: {len(unused)}, ratio: {len(unused) / (len(used) + len(unused))}", file=file)
 
 
-		fig = plt.figure()
 
 		num_scanning = np.mean(list(data.values()))
 		file = open('log.carscanning.dat', 'w')
 		file.write(str(num_scanning))
 		file.close()
 
-		ax1 = fig.add_subplot(121)
-		ax1.boxplot(list(data.values()), notch=True)
-		ax1.set_ylabel("#cars scanning")
-		ax1.set_title("#cars scanning")
-		ax1.set_title("#cars scanning\n(avg " + str(round(num_scanning, 1)) + ")")
-
-		ax2 = fig.add_subplot(122)
-		ax2.plot(list(data.keys()), list(data.values()))
-		ax2.set_xlabel("timestamp in seconds")
-		ax2.set_ylabel("#cars scanning")
-		ax2.set_title("#cars scanning\n(avg " + str(round(num_scanning, 1)) + ")")
-
-		plt.savefig("carscanning.pdf")
-		plt.close()
+		# fig = plt.figure()
+		#
+		# ax1 = fig.add_subplot(121)
+		# ax1.boxplot(list(data.values()), notch=True)
+		# ax1.set_ylabel("#cars scanning")
+		# ax1.set_title("#cars scanning")
+		# ax1.set_title("#cars scanning\n(avg " + str(round(num_scanning, 1)) + ")")
+		#
+		# ax2 = fig.add_subplot(122)
+		# ax2.plot(list(data.keys()), list(data.values()))
+		# ax2.set_xlabel("timestamp in seconds")
+		# ax2.set_ylabel("#cars scanning")
+		# ax2.set_title("#cars scanning\n(avg " + str(round(num_scanning, 1)) + ")")
+		#
+		# plt.savefig("carscanning.pdf")
+		# plt.close()
 
 		return num_scanning
 
@@ -185,21 +186,21 @@ def plot_num_cars():
 		file.write(str(avgnumcars))
 		file.close()
 
-		fig = plt.figure()
-
-		ax1 = fig.add_subplot(121)
-		ax1.boxplot(data, notch=True)
-		ax1.set_ylabel("# cars")
-		ax1.set_title("# cars\n(avg " + str(round(avgnumcars, 1)) + ")")
-
-		ax2 = fig.add_subplot(122)
-		ax2.plot(times, data)
-		ax2.set_xlabel("timestamp in seconds")
-		ax2.set_ylabel("# cars")
-		ax2.set_title("# cars\n(avg " + str(round(avgnumcars, 1)) + ")")
-
-		plt.savefig("cars.pdf")
-		plt.close()
+		# fig = plt.figure()
+		#
+		# ax1 = fig.add_subplot(121)
+		# ax1.boxplot(data, notch=True)
+		# ax1.set_ylabel("# cars")
+		# ax1.set_title("# cars\n(avg " + str(round(avgnumcars, 1)) + ")")
+		#
+		# ax2 = fig.add_subplot(122)
+		# ax2.plot(times, data)
+		# ax2.set_xlabel("timestamp in seconds")
+		# ax2.set_ylabel("# cars")
+		# ax2.set_title("# cars\n(avg " + str(round(avgnumcars, 1)) + ")")
+		#
+		# plt.savefig("cars.pdf")
+		# plt.close()
 
 	return avgnumcars
 
@@ -236,29 +237,29 @@ def plot_server_queue():
 		file.write(str(avg_server_queue_len))
 		file.close()
 
-		fig = plt.figure()
-
-		ax1 = fig.add_subplot(121)
-		boxdata = []
-		for server in data.keys():
-			boxdata.append(data[server])
-		ax1.boxplot(boxdata, notch=True)
-		ax1.set_xlabel("server")
-		ax1.set_ylabel("# scans to process")
-		ax1.set_title("server queue length")
-
-		ax2 = fig.add_subplot(122)
-		cnt = 0
-		colors = ["red", "green", "blue"]
-		for server in data.keys():
-			ax2.plot(times[server], data[server], color=colors[cnt])
-			cnt += 1
-		ax2.set_xlabel("timestamp in seconds")
-		ax2.set_ylabel("# scans to process")
-		ax2.set_title("server queue length")
-
-		plt.savefig("serverqueue.pdf")
-		plt.close()
+		# fig = plt.figure()
+		#
+		# ax1 = fig.add_subplot(121)
+		# boxdata = []
+		# for server in data.keys():
+		# 	boxdata.append(data[server])
+		# ax1.boxplot(boxdata, notch=True)
+		# ax1.set_xlabel("server")
+		# ax1.set_ylabel("# scans to process")
+		# ax1.set_title("server queue length")
+		#
+		# ax2 = fig.add_subplot(122)
+		# cnt = 0
+		# colors = ["red", "green", "blue"]
+		# for server in data.keys():
+		# 	ax2.plot(times[server], data[server], color=colors[cnt])
+		# 	cnt += 1
+		# ax2.set_xlabel("timestamp in seconds")
+		# ax2.set_ylabel("# scans to process")
+		# ax2.set_title("server queue length")
+		#
+		# plt.savefig("serverqueue.pdf")
+		# plt.close()
 
 		return avg_server_queue_len
 
@@ -287,6 +288,15 @@ def plot_all():
 		ete_latency = plot_ete_latency()
 		ete_distance = plot_ete_distance()
 
+		with open("log.carapperances.txt") as f:
+			num_appearances = int(f.readline())
+
+		with open("log.cardisappearances.txt") as f:
+			num_disappearances = int(f.readline())
+
+		with open("log.duration.txt") as f:
+			duration_s = float(f.readline())
+
 		data = {
 			"car_probability": car_probability,
 			"parking_probability": parking_probability,
@@ -294,7 +304,10 @@ def plot_all():
 			"num_scanning": num_scanning,
 			"ete_latency": ete_latency,
 			"ete_distance": ete_distance,
-			"server_queue": server_queue
+			"server_queue": server_queue,
+			"num_appearances": num_appearances,
+			"num_disappearances": num_disappearances,
+			"duration_s": duration_s
 		}
 
 		global_data[(car_probability, parking_probability, run)] = data
