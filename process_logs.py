@@ -307,7 +307,8 @@ def plot_all():
 			"server_queue": server_queue,
 			"num_appearances": num_appearances,
 			"num_disappearances": num_disappearances,
-			"duration_s": duration_s
+			"duration_s": duration_s,
+                        "run": run
 		}
 
 		global_data[(car_probability, parking_probability, run)] = data
